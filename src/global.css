@@ -1,6 +1,7 @@
 html {
 	overflow-x: hidden;
 	font-size: calc(1em + 1vh);
+	hyphens: auto;
 }
 
 body {
@@ -44,6 +45,7 @@ time[pubdate] { color: lightgrey; }
 	justify-content: evenly;
 	margin-bottom: 3rem;
 	padding-bottom: 1rem;
+	line-height: 1.3em;
 }
 
 #news > article > time {
@@ -53,6 +55,7 @@ time[pubdate] { color: lightgrey; }
 
 #news > article > p {
 	margin-bottom: 0;
+	text-align: justify;
 }
 
 #news > article > a {
@@ -61,18 +64,16 @@ time[pubdate] { color: lightgrey; }
 }
 
 section h2 {
+	text-align: right;
 	margin-bottom: 2rem;
 }
 
 #info {
-	font-size: 1.2rem;
+	text-align: justify;
+	font-size: 1.3rem;
 	line-height: 1.6;
 }
 
 #info > section {
 	margin-bottom: 4rem;
-}
-
-#info {
-	text-align: justify;
 }
