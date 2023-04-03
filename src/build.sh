@@ -1,3 +1,3 @@
 mkdir -p dist/
-cp *.html dist/
-cp VERSION dist/
+cp *.html *.css *.ico VERSION dist/
+cp -r img/ vendor/ dist/
