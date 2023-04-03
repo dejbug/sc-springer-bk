@@ -1,6 +1,20 @@
 html {
-  overflow-x: hidden;
+	overflow-x: hidden;
+	font-size: calc(1em + 1vh);
 }
+
+body {
+	font-family: serif;
+}
+
+a {
+	font-family: sans;
+	text-decoration: none;
+}
+
+blockquote .black { color: black; }
+
+time[pubdate] { color: lightgrey; }
 
 .divider {
 	position: relative;
@@ -13,13 +27,15 @@ html {
 	box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
 }
 
+@media (min-width:768px){
+	#news {
+		border-left: thin solid lightgrey;
+		padding-left: 1em;
+	}
+}
 #news {
 	display: flex;
 	flex-flow: column;
-	
-	border-left: thin solid lightgrey;
-	margin-left: 2em;
-	padding-left: 1em;
 }
 
 #news > article {
@@ -28,7 +44,11 @@ html {
 	justify-content: evenly;
 	margin-bottom: 3rem;
 	padding-bottom: 1rem;
+}
+
+#news > article > time {
 	border-bottom: thin solid black;
+	color: grey;
 }
 
 #news > article > p {
@@ -38,13 +58,21 @@ html {
 #news > article > a {
 	align-self: flex-end;
 	margin-bottom: 0;
-	text-decoration: none;
+}
+
+section h2 {
+	margin-bottom: 2rem;
 }
 
 #info {
-	font-size: 14pt;
+	font-size: 1.2rem;
+	line-height: 1.6;
 }
 
 #info > section {
-	margin-bottom: 3rem;
+	margin-bottom: 4rem;
+}
+
+#info {
+	text-align: justify;
 }
