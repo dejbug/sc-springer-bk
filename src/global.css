@@ -1,0 +1,45 @@
+.divider {
+	width: 100%;
+	height: 2rem;
+	background-color: rgba(0, 0, 0, .1);
+	border: solid rgba(0, 0, 0, .15);
+	border-width: 1px 0;
+	box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+}
+
+#news {
+	display: flex;
+	flex-flow: column;
+	width: 33vw;
+	
+	border-left: thin solid lightgrey;
+	margin-left: 2em;
+	padding-left: 1em;
+}
+
+#news > article {
+	display: flex;
+	flex-flow: column;
+	justify-content: evenly;
+	margin-bottom: 3rem;
+	padding-bottom: 1rem;
+	border-bottom: thin solid black;
+}
+
+#news > article > p {
+	margin-bottom: 0;
+}
+
+#news > article > a {
+	align-self: flex-end;
+	margin-bottom: 0;
+	text-decoration: none;
+}
+
+#info {
+	font-size: 14pt;
+}
+
+#info > section {
+	margin-bottom: 3rem;
+}
