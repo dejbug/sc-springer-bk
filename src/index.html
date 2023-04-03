@@ -16,7 +16,7 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
 	<div class="container-fluid">
 		<a class="navbar-brand" href="#">
-			<img class="img-thumbnail rounded" src="favicon.ico">
+			<img class="img-thumbnail rounded d-block d-lg-none" src="favicon.ico">
 		</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -56,25 +56,26 @@
 
 <div class="container-fluid px-3">
 
-<header class="pt-2 d-flex align-items-center">
-	<img class="d-none d-lg-block pe-4" src="img/logo.png">
-	<h1 class="me-auto">SC Springer Bad König</h1>
+<header class="pt-2 d-flex align-items-center d-none d-lg-flex">
+	<img class="pe-4" src="img/logo.png">
+	<h1 class="me-auto pt-2">SC Springer Bad König</h1>
 	<p class="d-none d-lg-block me-4 align-self-end">"Hallo." &mdash; Tartakower</p>
 </header>
 
-<hr class="divider">
+<hr class="divider d-none d-lg-flex">
+<hr class="d-block d-lg-none">
 
 <main>
 
-<div class="d-flex justify-content-between">
-	<div id="info">
+<div class="row">
+	<div id="info" class="col-md-6 col-lg-8">
 		<section>
 			<h1>Wann &amp; Wo</h1>
 			<p>Jeden Freitag findet von 18 bis 19:30 Jugendtraining statt (außer in den Ferien).</p>
 			<p>Daran schließt sich der Übungsabend für Erwachsene solange an, bis der Letzte nach Hause geht.</p>
 			<p>Gäste sind jederzeit herzlich willkommen!</p>
 			<p>Wir spielen in der Rentmeisterei (Schloßplatz, 64732 Bad König)</p>
-			<img class="img-fluid" src="img/rentmeisterei.jpg">
+			<img class="img-fluid rounded" src="img/rentmeisterei.jpg">
 		</section>
 
 		<section>
@@ -90,7 +91,7 @@
 		</section>
 	</div>
 
-	<div>
+	<div class="col-md-6 col-lg-4">
 		<section id="news">
 			<h1>Neuigkeiten</h1>
 

@@ -1,5 +1,11 @@
+html {
+  overflow-x: hidden;
+}
+
 .divider {
-	width: 100%;
+	position: relative;
+	left: -1em;
+	width: 100vw;
 	height: 2rem;
 	background-color: rgba(0, 0, 0, .1);
 	border: solid rgba(0, 0, 0, .15);
@@ -10,7 +16,6 @@
 #news {
 	display: flex;
 	flex-flow: column;
-	width: 33vw;
 	
 	border-left: thin solid lightgrey;
 	margin-left: 2em;
