@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+<link rel="stylesheet" href="reset.css">
+<link rel="stylesheet" href="status.css">
+<script src="status.js"></script>
+<style>
+html {
+	font-size: calc(.5em + 2vh);
+	text-align: justify;
+	hyphens: auto;
+	text-rendering: optimizeLegibility;
+	font-feature-settings: "liga" 1;
+	overflow-x: hidden;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+body { background-color: #999; }
+main { background-color: white; box-shadow: 1vw 1vh 1em grey; }
+
+main {
+	width: 1200px;
+	margin: 0 auto;
+	font-size: calc(1200px / 42);
+}
+@media (width < 1200px) {
+	main {
+		width: 800px;
+		margin: 0 auto;
+		font-size: calc(800px / 42);
+	}
+}
+@media (width < 800px) {
+	main {
+		width: 640px;
+		margin: 0 auto;
+		font-size: calc(640px / 42);
+	}
+}
+@media (width < 640px) {
+	main {
+		width: auto;margin: 0 0;
+		font-size: 1rem;
+	}
+}
+
+h2 { margin-bottom: .5em; }
+section:not(:nth-child(1)) > h2 { margin-top: 2em; }
+
+main {
+	padding: 3em;
+}
+
+section p + p {
+	margin-top: 1em;
+}
+
+.box {
+	display: inline-block;
+	width: 64px;
+	height: 64px;
+	background-color: navajowhite;
+	margin: 1em;
+}
+
+.left { float: left; }
+.right { float: right; }
+.clear { clear: both; }
+
+</style>
+</head>
+<body>
+<main>
+	<section id="rentmeisterei">
+		<h2>Wann &amp; Wo</h2>
+		<p>Jeden Freitag <span class="left box"></span> findet von 18 bis 19:30 Jugend&shy;training statt (außer in den Ferien). Daran schließt sich der Übungs&shy;abend für Er&shy;wachs&shy;ene solange an, bis der <span class="right box"></span> Letzte nach Hause geht.</p>
+		<p>Gäste sind jederzeit herzlich will&shy;kom&shy;men!</p>
+		<p>Wir spielen in der Rent&shy;mei&shy;ster&shy;ei (Schloßplatz, 64732 Bad König)</p>
+	</section>
+
+	<section id="momart">
+		<h2>Jetzt auch in Momart!</h2>
+		<p>Ab Montag, dem 06.03.2023, bietet die TSG MOMART wö&shy;chent&shy;lich im Klub&shy;raum des Sportler&shy;heims die Gele&shy;genheit, die Geheim&shy;nisse des könig&shy;lichen Spiels zu erlernen.</p>
+		<p>Los geht's um 17:30 Uhr (bis ca. 19:00 Uhr).</p>
+		<p>Will&shy;kom&shy;men ist jeder, der Lust hat, Schach zu spielen: vom An&shy;fäng&shy;er ohne Vor&shy;kennt&shy;nis&shy;se jeden Alters bis zum er&shy;fahr&shy;en&shy;en Ver&shy;eins&shy;spieler.</p>
+	</section>
+
+	<section id="spielbericht">
+		<h2>Spielbericht (12. Feb. 23)</h2>
+		<p>Am 6. Spieltag der Schachverbandsrunden verbuchte der SC Springer ein Unentschieden und eine Niederlage. Der Bezirksligist kam nach wechselnder Führung zu einem schiedlichen 3,5 : 3,5, während Bad König II 1,5 : 3,5 gegen Schaafheim 2 unterlag. ... Weiterlesen</p>
+	</section>
+</main>
+</body>
+</html>

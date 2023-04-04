@@ -2,6 +2,8 @@ html {
 	overflow-x: hidden;
 	font-size: calc(1em + 1vh);
 	hyphens: auto;
+	text-rendering: optimizeLegibility;
+	font-feature-settings: "liga" 1;
 }
 
 body {
@@ -34,6 +36,12 @@ time[pubdate] { color: lightgrey; }
 		padding-left: 1em;
 	}
 }
+
+section h2 {
+	text-align: right;
+	margin-bottom: 2rem;
+}
+
 #news {
 	display: flex;
 	flex-flow: column;
@@ -61,11 +69,6 @@ time[pubdate] { color: lightgrey; }
 #news > article > a {
 	align-self: flex-end;
 	margin-bottom: 0;
-}
-
-section h2 {
-	text-align: right;
-	margin-bottom: 2rem;
 }
 
 #info {

@@ -1,0 +1,13 @@
+#status {
+	position: fixed; top:0; right: 0; padding: 1em;
+	font-family: sans; font-size: 1.3vw;
+	color: lightgrey;
+}
+
+#status-cat:before { content: "<= 576"; }
+
+@media (min-width: 576px) { #status-cat:before { content: "> 576"; } }
+@media (min-width: 768px) { #status-cat:before { content: "> 768"; } }
+@media (min-width: 992px) { #status-cat:before { content: "> 992"; } }
+@media (min-width: 1200px) { #status-cat:before { content: "> 1200"; } }
+@media (min-width: 1400px) { #status-cat:before { content: "> 1488"; } }
