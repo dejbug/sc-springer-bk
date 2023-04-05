@@ -1,0 +1,50 @@
+Brunner,6.5
+Messer,5.5
+Sauer,4.5
+Schupp,4
+Iwanicki,3.5
+Budimir,3
+Leimgruber Jakob,1
+
+Anton,6
+Brunner,5
+Sauer,4.5
+Messer,4
+Wenzel,3.5
+Heusel,3
+Budimir,2
+
+
+
+Iwanicki,9
+Anton,8.5
+Messer,7.5
+Brunner,7
+Budimir,5.5
+Wenzel,5
+Heusel,4.5
+Pfeiffer,4
+Reinhold,3
+Petersen,1
+
+
+Anton,11.5
+Heusel,9
+Pfeiffer,6
+Messer,5.5
+Leimgruber Jared,5
+Leimgruber Jakob,3
+Reinhold,2
+
+
+Brunner,9.5
+Heusel,9
+Anton,8
+Messer,8
+Sauer,8
+Schupp,7
+Budimir,5
+Leimgruber Jared,4
+Pfeiffer,4
+Leimgruber Jakob,2
+Hartmann,1.5
