@@ -13,8 +13,8 @@ def root(*paths):
 
 def argParser(idef=None, odef=None, fdef=False):
 	p = argparse.ArgumentParser()
-	def add(name_or_flags, metavar="", / , **kk):
-		if "metavar" not in kk: kk.update({"metavar": metavar})
+	def add(name_or_flags, metavar_="", **kk):
+		if "metavar" not in kk: kk.update({"metavar": metavar_})
 		return p.add_argument(name_or_flags, **kk)
 	def parse(args=None, argv=True):
 		args, argv = (args, argv) if args else (sys.argv, True)
