@@ -1,0 +1,14 @@
+#status {
+	position: fixed;
+	bottom: .5em;
+	right: .5em;
+	padding: .5vh 1vh;
+	font-size: 2vh;
+	border: .1vh solid black;
+	background-color: white;
+	color: black;
+	box-shadow: .2em .2em lightgrey;
+}
+#status:after { content: "small" }
+@media (min-width:768px) { #status:after { content: "medium" }}
+@media (min-width:1200px) { #status:after { content: "large" }}

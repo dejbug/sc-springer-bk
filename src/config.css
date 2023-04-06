@@ -1,0 +1,8 @@
+:root {
+	--grid-fuzz: 1px;
+
+	--opacity: .8;
+
+	--bg-menu: rgb(248,249,250);
+	--fg-menu: rgba(0,0,0,.6);
+}
