@@ -1,6 +1,7 @@
 .PHONY : all clean run inc incpat incmaj incmin
 
 RELEASE := 0
+VENDOR := 0
 
 MAJOR := $(shell cut -d. -f1 VERSION)
 MINOR := $(shell cut -d. -f2 VERSION)
@@ -8,9 +9,12 @@ PATCH := $(shell cut -d. -f3 VERSION)
 
 DIST :=
 DIST += dist/*.html dist/*.css
-DIST += dist/img/ dist/vendor/ dist/downloads/
-ifneq ($(RELEASE),1)
-DIST += dist/learning/
+DIST += dist/img/ dist/downloads/
+ifneq ($(VENDOR),0)
+	DIST += dist/vendor/
+endif
+ifeq ($(RELEASE),0)
+	DIST += dist/learning/
 endif
 
 all : $(DIST)
