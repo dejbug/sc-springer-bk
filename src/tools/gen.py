@@ -41,7 +41,7 @@ def generate(ipath, opath, force, callback=callback):
 
 def main(argv=sys.argv):
 	p = tools.argParser()
-	tools.argParserIOF(p, idef=tools.root("index.html"))
+	tools.argParserIOF(p)
 	p, aa = p.parse(argv)
 	#~ print(aa); exit()
 	generate(aa.ipath, aa.opath, aa.force)

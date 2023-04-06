@@ -7,11 +7,10 @@ MAJOR := $(shell cut -d. -f1 VERSION)
 MINOR := $(shell cut -d. -f2 VERSION)
 PATCH := $(shell cut -d. -f3 VERSION)
 
+TEMPLATES := $(wildcard *.htm)
 FILES := $(wildcard *.html *.css *.ico)
 
 DIST :=
-DIST += $(FILES:%=dist/%)
-DIST += dist/vendor/github.svg
 DIST += dist/img/ dist/downloads/
 ifneq ($(VENDOR),0)
 	DIST += dist/vendor/
@@ -19,6 +18,9 @@ endif
 ifneq ($(LEARNING),0)
 	DIST += dist/learning/
 endif
+DIST += $(FILES:%=dist/%)
+DIST += $(TEMPLATES:%.htm=dist/%.html)
+DIST += dist/vendor/github.svg
 
 all : $(DIST)
 
@@ -26,7 +28,7 @@ dist : ; mkdir -p ./dist/
 dist/%/ : % | dist ; cp -r $</ $@
 dist/% : % ; mkdir -p $(dir $@) && cp $< $@
 
-dist/index.html : index.html tools/gen.py | dist ; python tools/gen.py -fo dist/index.html
+dist/%.html : %.htm | tools/gen.py dist ; python tools/gen.py -i $< -fo $@
 
 clean : ; rm -rf ./dist/
 run : all ; cd dist && php -S 0.0.0.0:8000
