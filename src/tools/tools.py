@@ -53,7 +53,7 @@ def oopen(opath, force=False):
 	else:
 		ofile = io.StringIO()
 		yield ofile
-		print(ofile.getvalue())
+		print(ofile.getvalue(), end="")
 
 def shell(cmd):
 	p = subprocess.Popen(cmd, shell=True,

@@ -2,7 +2,7 @@ import sys, re
 
 import tools, news
 
-re_field = re.compile(r'((?:[ \t]*)(?:\{\{.+\}\}))')
+re_field = re.compile(r'((?:[ \t]*)(?:\{\{.+?\}\}))[\r\n]?')
 re_key = re.compile(r'([ \t]*)\{\{(.+)\}\}')
 
 #~ def iter(ipath):
@@ -11,6 +11,7 @@ re_key = re.compile(r'([ \t]*)\{\{(.+)\}\}')
 			#~ yield x
 
 def parsekey(key, env={}):
+	#~ print(key)
 	x = re_key.match(key)
 	if not x: return (None, None)
 	prefix, key = x.groups()
