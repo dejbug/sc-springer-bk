@@ -1,0 +1,11 @@
+.github {
+	background: url(vendor/github.svg) pink no-repeat center;
+	width: 256px;
+	height: 64px;
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 0;
+	transform-origin: center center;
+	transform: translate(96px) rotate(45deg);
+}

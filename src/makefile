@@ -11,6 +11,7 @@ FILES := $(wildcard *.html *.css *.ico)
 
 DIST :=
 DIST += $(FILES:%=dist/%)
+DIST += dist/vendor/github.svg
 DIST += dist/img/ dist/downloads/
 ifneq ($(VENDOR),0)
 	DIST += dist/vendor/
@@ -22,8 +23,8 @@ endif
 all : $(DIST)
 
 dist : ; mkdir -p ./dist/
-dist/%/ : % | dist ; cp -rt ./dist/ ./$</
-dist/% : % | dist ; cp -t ./dist/ ./$<
+dist/%/ : % | dist ; cp -r $</ $@
+dist/% : % ; mkdir -p $(dir $@) && cp $< $@
 
 dist/index.html : index.html tools/gen.py | dist ; python tools/gen.py -fo dist/index.html
 
