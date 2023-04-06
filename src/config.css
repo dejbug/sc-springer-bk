@@ -5,4 +5,7 @@
 
 	--bg-menu: rgb(248,249,250);
 	--fg-menu: rgba(0,0,0,.6);
+	
+	--break-md: 768px;
+	--break-lg: 1200px;
 }

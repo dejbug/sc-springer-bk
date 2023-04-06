@@ -1,14 +1,7 @@
-from sys import argv, stdout
-from os import path
-from re import compile
+import sys, re
 from datetime import datetime
 
-def getipath():
-	if len(argv) >= 2:
-		return ospath.abspath(argv[1])
-	root = path.dirname(path.dirname(path.abspath(__file__)))
-	contents = path.join(root, "content")
-	return path.join(contents, "news.txt")
+import tools
 
 def iter(ipath):
 	news = {}
@@ -23,9 +16,9 @@ def iter(ipath):
 
 def parsefile(ipath):
 	pat = [
-		compile(r'^\s*(\d\d?)\.(\d\d?).(\d{2,4})\s*.\s*(\d\d?):(\d\d?)'),
-		compile(r'(.+)'),
-		compile(r'\s*(?:"(.+?)")?(?:\s*(.+))?'),
+		re.compile(r'^\s*(\d\d?)\.(\d\d?).(\d{2,4})\s*.\s*(\d\d?):(\d\d?)'),
+		re.compile(r'(.+)'),
+		re.compile(r'\s*(?:"(.+?)")?(?:\s*(.+))?'),
 	]
 
 	state = 0
@@ -60,23 +53,31 @@ def printnews(ipath):
 			print()
 		print()
 
-def printhtml(ipath, file=stdout, prefix=""):
+def printhtml(ipath, ofile=sys.stdout, prefix=""):
 	for news in iter(ipath):
-		file.write(prefix + '<article>\n')
-		file.write(prefix + '\t<time datetime="%s">%s</time>\n' % (
+		ofile.write(prefix + '<article>\n')
+		ofile.write(prefix + '\t<time datetime="%s">%s</time>\n' % (
 			news["time"].strftime("%Y-%m-%dT%H:%M:00"),
 			news["time"].strftime("%Y-%m-%d / %H:%M")
 		))
-		file.write(prefix + '\t<p>%s</p>\n' % news["text"])
+		ofile.write(prefix + '\t<p>%s</p>\n' % news["text"])
 		if "link" in news:
-			file.write(prefix + '\t<a href="%s">%s</a>\n' % (
+			ofile.write(prefix + '\t<a href="%s">%s</a>\n' % (
 				news["url"] or "",
 				news["link"]
 			))
-		file.write(prefix + '</article>\n')
+		ofile.write(prefix + '</article>\n')
 
 if __name__ == "__main__":
-	ipath = getipath()
-	assert path.isfile(ipath)
-	printnews(ipath)
-	#~ printhtml(ipath)
+	p = tools.argParser()
+	tools.argParserIOF(p, idef=tools.root("content", "news.txt"))
+	p.add("--mode", choices=["list","html"], default="list")
+	p.add("--prefix", default="")
+	p, aa = p.parse()
+	#~ print(aa); exit()
+
+	if aa.mode == "list":
+		printnews(aa.ipath)
+	elif aa.mode == "html":
+		with tools.oopen(aa.opath, aa.force) as ofile:
+			printhtml(aa.ipath, ofile, aa.prefix)

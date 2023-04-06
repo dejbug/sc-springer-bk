@@ -94,7 +94,7 @@ nav { background-color: var(--bg-menu) }
 	.navbar > * { margin-bottom: 1em }
 /* } */
 
-@media (min-width:768px) {
+@media (min-width: 768px) {
 	.navbar {
 		flex-flow: row nowrap;
 		align-items: center;
@@ -107,7 +107,7 @@ nav { background-color: var(--bg-menu) }
 	}
 }
 
-@media (min-width:1200px) {
+@media (min-width: 1200px) {
 	#news {
 		border-left: thin solid lightgrey;
 	}

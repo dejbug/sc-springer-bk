@@ -1,67 +1,50 @@
-from sys import argv
-from os import path
-from re import compile
-from io import StringIO
-from argparse import ArgumentParser
-from contextlib import contextmanager
+import sys, re
 
-from news import printhtml
+import tools, news
 
-re_field = compile(r'((?:[ \t]+)(?:\{\{.+\}\}))')
-re_key = compile(r'([ \t]*)\{\{(.+)\}\}')
+re_field = re.compile(r'((?:[ \t]*)(?:\{\{.+\}\}))')
+re_key = re.compile(r'([ \t]*)\{\{(.+)\}\}')
 
-def parseargs(args=argv[1:]):
-	p = ArgumentParser()
-	p.add_argument("-i", metavar="PATH", default=path.join(getroot(), "index.html"))
-	p.add_argument("-o", metavar="PATH")
-	p.add_argument("-f", action="store_true")
-	aa = p.parse_args(args)
+#~ def iter(ipath):
+	#~ with open(ipath) as file:
+		#~ for x in re_field.finditer(file.read()):
+			#~ yield x
 
-	if not path.isfile(aa.i):
-		p.error('no such input file: "%s"' % aa.i)
-
-	if aa.o and not aa.f and path.exists(aa.o):
-		p.error('output file exits: "%s"; delete manually (or use -f)' % aa.o)
-
-	return p, aa
-
-def getroot():
-	return path.dirname(path.dirname(path.abspath(__file__)))
-
-def iter(ipath):
-	with open(ipath) as file:
-		for x in re_field.finditer(file.read()):
-			yield x
-
-def handler(ofile, key):
-	prefix, key = parsekey(key)
-	if key == "news":
-		ipath = path.join(getroot(), "content/news.txt")
-		printhtml(ipath, ofile, prefix)
-
-def parsekey(key):
+def parsekey(key, env={}):
 	x = re_key.match(key)
-	return x.groups() if x else (None, None)
+	if not x: return (None, None)
+	prefix, key = x.groups()
+	env.update({"prefix":'"%s"' % prefix})
+	key = key.format(**env)
+	return prefix, key
 
-@contextmanager
-def oopen(opath, force=True):
-	if opath and (force or not path.exists(opath)):
-		with open(opath, "w") as ofile:
-			yield ofile
-	else:
-		ofile = StringIO()
-		yield ofile
-		print(ofile.getvalue())
+def callback(ofile, chunk, env={}):
+	prefix, key = parsekey(chunk, env)
+	out, err = tools.shell(key)
+	otext = out.decode("utf8")
+	#~ print(otext)
+	ofile.write(otext)
 
-def generate(ofile, ipath, callback=handler):
-	text = open(ipath).read()
+def generate(ipath, opath, force, callback=callback):
+	text = open(ipath, encoding="utf-8").read()
+	chunks = re_field.split(text)
+	env = {
+		"ipath": ipath,
+		"opath": opath,
+		"force": force,
+	}
 	state = 0
-	for chunk in re_field.split(text):
-		ofile.write(chunk) if state == 0 else callback(ofile, chunk)
-		state = (state + 1) % 2
+	with tools.oopen(opath, force) as ofile:
+		for chunk in chunks:
+			ofile.write(chunk) if state == 0 else callback(ofile, chunk, env)
+			state = (state + 1) % 2
+
+def main(argv=sys.argv):
+	p = tools.argParser()
+	tools.argParserIOF(p, idef=tools.root("index.html"))
+	p, aa = p.parse(argv)
+	#~ print(aa); exit()
+	generate(aa.ipath, aa.opath, aa.force)
 
 if __name__ == "__main__":
-	p, aa = parseargs()
-	#~ print(aa); exit()
-	with oopen(aa.o) as ofile:
-		generate(ofile, aa.i)
+	main()
