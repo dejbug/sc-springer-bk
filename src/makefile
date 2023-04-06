@@ -28,7 +28,7 @@ dist : ; mkdir -p ./dist/
 dist/%/ : % | dist ; cp -r $</ $@
 dist/% : % ; mkdir -p $(dir $@) && cp $< $@
 
-dist/%.html : %.htm | tools/gen.py dist ; python tools/gen.py -i $< -fo $@
+dist/%.html : %.htm content/* tools/gen.py | dist ; python tools/gen.py -i $< -fo $@
 
 clean : ; rm -rf ./dist/
 run : all ; cd dist && php -S 0.0.0.0:8000
