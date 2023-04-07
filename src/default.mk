@@ -11,6 +11,7 @@ all : dist/learning/
 endif
 
 dist/index.html : dist/default.css
+dist/index.html : content/*.html
 dist/index.html : dist/img/ dist/downloads/
 dist/index.html : dist/VERSION dist/favicon.ico
 
