@@ -1,4 +1,4 @@
-.PHONY : all clean run inc incpat incmaj incmin
+.PHONY : all clean serve run ls inc incpat incmaj incmin
 
 VENDOR := 0
 LEARNING := 0
@@ -7,33 +7,35 @@ MAJOR := $(shell cut -d. -f1 VERSION)
 MINOR := $(shell cut -d. -f2 VERSION)
 PATCH := $(shell cut -d. -f3 VERSION)
 
-TEMPLATES := $(wildcard *.htm)
-FILES := $(wildcard *.html *.css *.ico)
+MKDIR := mkdir -p
+RMDIR := rm -rf
+FCOPY = $(MKDIR) dist/$(dir $2) && cp -t dist/$(dir $2) $1
+DCOPY = $(MKDIR) dist/$2 && cp -t dist/ -r $1
 
-DIST :=
-DIST += dist/img/ dist/downloads/
-ifneq ($(VENDOR),0)
-	DIST += dist/vendor/
-endif
-ifneq ($(LEARNING),0)
-	DIST += dist/learning/
-endif
-DIST += $(FILES:%=dist/%)
-DIST += $(TEMPLATES:%.htm=dist/%.html)
-DIST += dist/vendor/github.svg
+SERVE := php -S 0.0.0.0:8000
+RENDER := python tools/render.py
 
-all : $(DIST)
+include default.mk
 
-dist : ; mkdir -p ./dist/
-dist/%/ : % | dist ; cp -r $</ $@
-dist/% : % ; mkdir -p $(dir $@) && cp $< $@
+all : ;
 
-dist/%.html : %.htm content/* tools/gen.py | dist ; python tools/gen.py -i $< -fo $@
+dist/%.html : %.html | dist ; $(RENDER) -o dist/$< $<
+dist/%.css : %.css | dist ; $(RENDER) -o dist/$< $<
 
-clean : ; rm -rf ./dist/
-run : all ; cd dist && php -S 0.0.0.0:8000
+dist/% : % | dist ; $(call FCOPY,$<,$<)
+dist/%/ : % | dist ; $(call DCOPY,$<,$<)
+
+dist : ; $(MKDIR) dist/
+
+
+clean : ; $(RMDIR) dist/
+
+serve : all ; cd dist && $(SERVE)
+run : all dist/index.php ; cd dist && $(SERVE)
+
+ls : all ; @find dist/ -type f | sort
 
 incmaj : ; @echo -n $(shell echo $(MAJOR)+1 | bc).$(MINOR).$(PATCH) > VERSION
 incmin : ; @echo -n $(MAJOR).$(shell echo $(MINOR)+1 | bc).$(PATCH) > VERSION
 incpat : ; @echo -n $(MAJOR).$(MINOR).$(shell echo $(PATCH)+1 | bc) > VERSION
-inc : incpat ;
+inc : incpat

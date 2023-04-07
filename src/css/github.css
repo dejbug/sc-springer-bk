@@ -1,6 +1,6 @@
 .github {
 	display: block;
-	position: absolute;
+	position: fixed;
 	opacity: .8;
 	top: 8px; right: 8px;
 	width: 32px;

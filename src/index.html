@@ -8,13 +8,7 @@
 	<meta name="description" content="Homepage des Schachclubs SC Springer Bad König">
 	<title>SC Springer Bad König</title>
 	<link rel="favicon" href="favicon.ico">
-	<link rel="stylesheet" href="config.css">
-	<link rel="stylesheet" href="reset.css">
-	<link rel="stylesheet" href="grid.css">
-	<link rel="stylesheet" href="tools.css">
-	<link rel="stylesheet" href="global.css">
-	<link rel="stylesheet" href="github.css">
-	<link rel="stylesheet" href="status.css">
+	<link rel="stylesheet" href="default.css">
 </head>
 <body>
 
@@ -53,7 +47,7 @@
 	<div class="col-md-6 col-lg-4">
 		<section id="news">
 			<h2>Neuigkeiten</h2>
-			{{ python tools/news.py --mode html --prefix {prefix} }}
+			{{ python tools/news.py --mode html --prefix "{prefix}" }}
 		</section>
 	</div>
 </div>
