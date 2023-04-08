@@ -30,7 +30,7 @@ dist : ; $(MKDIR) dist/
 
 clean : ; $(RMDIR) dist/
 
-serve : all ; cd dist && $(SERVE)
+serve : all ; cd dist && rm -f index.php && $(SERVE)
 run : all dist/index.php ; cd dist && $(SERVE)
 
 ls : all ; @find dist/ -type f | sort
