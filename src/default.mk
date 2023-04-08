@@ -15,7 +15,7 @@ dist/index.html : content/*.html
 dist/index.html : dist/img/ dist/downloads/
 dist/index.html : dist/VERSION dist/favicon.ico
 
-dist/default.css : $(wildcard css/*)
+dist/default.css : css/*
 dist/default.css : dist/vendor/github.svg
 
 dist/index.php : tools/index.php ; $(call FCOPY,$<,dist)
