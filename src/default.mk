@@ -1,6 +1,9 @@
 .PHONY : all
 
-MISC := dist/VERSION dist/favicon.ico dist/img/ dist/downloads/ dist/default.css
+MISC := VERSION favicon.ico img/ downloads/ default.css
+MISC += $(wildcard vendor/rewe/img/*.png)
+MISC := $(MISC:%=dist/%)
+
 
 HTML := $(wildcard *.html)
 HTML := $(HTML:%=dist/%)
@@ -19,7 +22,7 @@ dist/index.php : tools/index.php ; $(call FCOPY,$<,dist)
 
 dist/default.css : css/* dist/vendor/github.svg
 
-$(DIST) : content/*.html
+$(HTML) : content/*.html
 
 dist/vereinsturniere.html : dist/pokal-22.html
 

@@ -124,3 +124,13 @@ nav { background-color: var(--bg-menu) }
 @media (min-width: 1200px) {
 	blockquote > p > wbr:nth-child(3) { display: block }
 }
+
+
+.alert {
+	background-color: steelblue;
+	color: white;
+	font-family: sans;
+	font-size: 1.4em;
+	width: 100%;
+	display: flex;
+}

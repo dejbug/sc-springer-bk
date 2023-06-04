@@ -12,6 +12,11 @@
 </head>
 <body>
 
+<div class="alert">
+	<p class="me-auto">Wir haben erst {{ tools/scheine.sh }} Scheine! Helft uns sammeln!</p>
+	<a href="https://scheinefuervereine.rewe.de#verein-10000037078?ecid=cop_widget_sfv2023_toolkit_widget_nn_nn_nn" target="_blank"><img src="vendor/rewe/img/sfv_widget_240x45px.png" alt="REWE Scheine für Vereine | Schachclub Springer Bad König e.V." width="240" height="45" class="me-3"></a>
+</div>
+
 {{ cat content/navbar.html }}
 {{ cat content/header.html }}
 
@@ -31,6 +36,7 @@
 	<div class="col-md-6 col-lg-4">
 		<section id="news">
 			<h2>Neuigkeiten</h2>
+			<a href="https://scheinefuervereine.rewe.de#verein-10000037078?ecid=cop_widget_sfv2023_toolkit_widget_nn_nn_nn" target="_blank"><img src="vendor/rewe/img/sfv_widget_420x500px.png" alt="REWE Scheine für Vereine | Schachclub Springer Bad König e.V." width="420" height="500" class="mh-auto mb-2 rounded"></a>
 			{{ python tools/news.py --mode html --prefix "{prefix}" }}
 		</section>
 	</div>
