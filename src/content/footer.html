@@ -19,7 +19,7 @@
 	</aside>
 	<div class="d-flex jc-end mb-1 border-top p-1 border-top">
 		<a href="impressum.html"{{
-			[ "{disable}" == "true" ] && echo -n ' class="disabled"'
+			test "{disable}" == "true" && echo -n ' class="disabled"'
 		}}>Impressum</a>
 	</div>
 </footer>
