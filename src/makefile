@@ -1,7 +1,5 @@
 .PHONY : all clean serve run ls inc incpat incmaj incmin
 
-SHELL := /bin/bash
-
 VENDOR := 0
 LEARNING := 0
 
@@ -18,8 +16,6 @@ SERVE := php -S 0.0.0.0:8000
 RENDER := python tools/render.py
 
 include default.mk
-
-all : ;
 
 dist/%.html : %.html | dist ; $(RENDER) -o dist/$< $<
 dist/%.css : %.css | dist ; $(RENDER) -o dist/$< $<

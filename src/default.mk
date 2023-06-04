@@ -1,5 +1,3 @@
-.PHONY : all
-
 MISC := VERSION favicon.ico img/ downloads/ default.css
 MISC += $(wildcard vendor/rewe/img/*.png)
 MISC := $(MISC:%=dist/%)
@@ -8,7 +6,14 @@ MISC := $(MISC:%=dist/%)
 HTML := $(wildcard *.html)
 HTML := $(HTML:%=dist/%)
 
-all : $(HTML) $(MISC)
+all :
+	@echo $(SHELL)
+	@ls -l /bin/sh
+	@$(SHELL) --version | head -n 1
+	@python --version
+	@[[ -a makefile ]] && echo OK
+
+#~ all : $(HTML) $(MISC)
 
 ifneq ($(VENDOR),0)
 all : dist/vendor/
