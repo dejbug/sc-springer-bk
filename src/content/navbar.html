@@ -5,18 +5,18 @@
 <nav class="navbar">
 	<img class="d-none d-md-block d-lg-none rounded" src="favicon.ico">
 	<a href="/"{{
-		test "{active}" = "index" && echo -n ' class="active"'
+		[[ "{active}" = "index" ]] && echo -n ' class="active"'
 	}}>Start</a>
 	<a href="saison-22-23.html"{{
-		test "{active}" = "saison-22-23" && echo -n ' class="active"'
+		[[ "{active}" = "saison-22-23" ]] && echo -n ' class="active"'
 	}}>Saison 22/23</a>
 	<a href="vereinsturniere.html"{{
-		test "{active}" = "vereinsturniere" && echo -n ' class="active"'
+		[[ "{active}" = "vereinsturniere" ]] && echo -n ' class="active"'
 	}}>Vereinsturniere</a>
 	<a href="jugendschach.html"{{
-		test "{active}" = "jugendschach" && echo -n ' class="active"'
+		[[ "{active}" = "jugendschach" ]] && echo -n ' class="active"'
 	}}>Jugendschach</a>
 	<a href="geschichte.html"{{
-		test "{active}" = "geschichte" && echo -n ' class="active"'
+		[[ "{active}" = "geschichte" ]] && echo -n ' class="active"'
 	}}>Geschichte</a>
 </nav>
