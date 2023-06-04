@@ -37,10 +37,12 @@ def log(p, aa, e):
 def process(p, aa, groups):
 	prefix, cmd = groups
 	#~ print("|%s| |%s| (%d)" % (cmd, prefix, len(prefix)))
+	sys.stderr.write("1 ||| %s |||\n" % cmd)
 	try: cmd = cmd.format(p=p, aa=aa, prefix=prefix, **aa.args)
 	except KeyError as e:
 		log(p, aa, e)
 		return ""
+	sys.stderr.write("2 ||| %s |||\n" % cmd)
 	out, err = tools.shell(cmd, "utf-8")
 	if err: raise ProcessError(err)
 	return out
