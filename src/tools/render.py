@@ -30,8 +30,7 @@ def log(p, aa, e):
 	if aa.epath:
 		ferr = open(aa.epath, "a", encoding="utf-8")
 		ferr.write("-" * 101 + "\n")
-		#~ pprint.pprint(aa.__dict__, stream=ferr, sort_dicts=False)
-		pprint.pprint(aa.__dict__, stream=ferr)
+		pprint.pprint(aa.__dict__, stream=ferr, sort_dicts=False)
 		ferr.write("\n")
 		traceback.print_exception(e, file=ferr)
 

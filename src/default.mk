@@ -6,14 +6,7 @@ MISC := $(MISC:%=dist/%)
 HTML := $(wildcard *.html)
 HTML := $(HTML:%=dist/%)
 
-all :
-	@echo $(SHELL)
-	@ls -l /bin/sh
-	@$(SHELL) --version | head -n 1
-	@python --version
-	@[[ -a makefile ]] && echo OK
-
-#~ all : $(HTML) $(MISC)
+all : $(HTML) $(MISC)
 
 ifneq ($(VENDOR),0)
 all : dist/vendor/
