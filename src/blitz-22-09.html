@@ -1,0 +1,18 @@
+{{ cat content/html-header.html }}
+{{ cat content/navbar.html }}
+{{ cat content/header.html }}
+
+<main>
+<article>
+
+<h1>Blitzturnier September 2022</h1>
+
+<div class="of-a">
+{{ python tools/csv2table.py tables/blitz-22-09.csv }}
+</div>
+
+</article>
+</main>
+
+{{ cat content/footer.html }}
+{{ cat content/html-footer.html }}

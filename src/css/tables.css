@@ -1,0 +1,38 @@
+table {
+	border-collapse: collapse;
+	font-size: 1.5em;
+	font-family: sans;
+	white-space: nowrap;
+}
+
+th, td {
+	border: 1px solid black;
+	padding: .3em;
+	min-width: 2em;
+}
+
+th, td:nth-child(1) {
+	color: #ed889c;
+}
+
+td:nth-child(1) {
+	font-weight: bold;
+}
+
+td:nth-child(2) {
+	padding: 0 1em;
+	font-family: serif;
+}
+
+td:not(:nth-child(2)) {
+	text-align: center;
+}
+
+td.identity {
+	color: lightgrey;
+}
+
+td:last-child {
+	text-align: left;
+	padding-left: 1.5em;
+}

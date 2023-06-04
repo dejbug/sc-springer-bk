@@ -1,6 +1,11 @@
 .PHONY : all
 
-all : dist/index.html
+MISC := dist/VERSION dist/favicon.ico dist/img/ dist/downloads/ dist/default.css
+
+HTML := $(wildcard *.html)
+HTML := $(HTML:%=dist/%)
+
+all : $(HTML) $(MISC)
 
 ifneq ($(VENDOR),0)
 all : dist/vendor/
@@ -10,12 +15,12 @@ ifneq ($(LEARNING),0)
 all : dist/learning/
 endif
 
-dist/index.html : dist/default.css
-dist/index.html : content/*.html
-dist/index.html : dist/img/ dist/downloads/
-dist/index.html : dist/VERSION dist/favicon.ico
-
-dist/default.css : css/*
-dist/default.css : dist/vendor/github.svg
-
 dist/index.php : tools/index.php ; $(call FCOPY,$<,dist)
+
+dist/default.css : css/* dist/vendor/github.svg
+
+$(DIST) : content/*.html
+
+dist/vereinsturniere.html : dist/pokal-22.html
+
+dist/blitz-*.html : dist/blitz-%.html : tables/blitz-%.csv tools/csv2table.py
