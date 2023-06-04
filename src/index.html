@@ -17,8 +17,8 @@
 	<a href="https://scheinefuervereine.rewe.de#verein-10000037078?ecid=cop_widget_sfv2023_toolkit_widget_nn_nn_nn" target="_blank"><img src="vendor/rewe/img/sfv_widget_240x45px.png" alt="REWE Scheine für Vereine | Schachclub Springer Bad König e.V." width="240" height="45" class="me-3"></a>
 </div>
 
-{{ cat content/navbar.html }}
-{{ cat content/header.html }}
+{{ python tools/render.py content/navbar.html active=index }}
+{{ python tools/render.py content/header.html }}
 
 <main>
 
@@ -43,6 +43,6 @@
 </div>
 
 </main>
-{{ cat content/footer.html }}
+{{ python tools/render.py content/footer.html }}
 </body>
 </html>

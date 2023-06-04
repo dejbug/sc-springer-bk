@@ -1,5 +1,5 @@
 {{ cat content/html-header.html }}
-{{ cat content/navbar.html }}
+{{ python tools/render.py content/navbar.html active=geschichte }}
 {{ cat content/header.html }}
 
 <main>
@@ -30,5 +30,5 @@
 </article>
 </main>
 
-{{ cat content/footer.html }}
+{{ python tools/render.py content/footer.html }}
 {{ cat content/html-footer.html }}

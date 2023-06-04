@@ -1,21 +1,5 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="keywords" content="chess, schach, verein, sport, hessen, odenwald, bad könig">
-	<meta name="description" content="Homepage des Schachclubs SC Springer Bad König">
-	<title>SC Springer Bad König</title>
-	<link rel="favicon" href="favicon.ico">
-	<link rel="stylesheet" href="default.css">
-<style>
-main { margin: 1em; }
-</style>
-</head>
-<body>
-
-{{ cat content/navbar.html }}
+{{ cat content/html-header.html }}
+{{ python tools/render.py content/navbar.html active=impressum }}
 {{ cat content/header.html }}
 
 <main>
@@ -90,6 +74,6 @@ Magdeburger Straße 15<br>
 <p>Der SC Springer Bad König folgt den Datenschutzrichtlinien der Bundesrepublik Deutschland und der Europäischen Union.</p>
 
 </main>
-{{ cat content/footer.html }}
-</body>
-</html>
+
+{{ python tools/render.py content/footer.html disable=true }}
+{{ cat content/html-footer.html }}

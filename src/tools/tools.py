@@ -6,10 +6,10 @@ import argparse
 class Error(Exception): pass
 class OverwriteError(Error): pass
 
-def root(*paths):
+def root(*parts):
 	file = os.path.abspath(__file__)
 	root = os.path.dirname(os.path.dirname(file))
-	return functools.reduce(os.path.join, paths, root)
+	return functools.reduce(os.path.join, parts, root)
 
 def argParser():
 	p = argparse.ArgumentParser()
@@ -118,9 +118,11 @@ def rsplit(text, splitter, key=lambda x: x.groups()):
 	offset = 0
 	for x in splitter.finditer(text):
 		if x.start(0) > offset:
-			if x.start(0) > offset:
-				yield 0, text[offset:x.start(0)]
+			yield 0, text[offset:x.start(0)]
 		yield 1, key(x)
 		offset = x.end(0)
 	if len(text) > offset:
 		yield 0, text[offset:]
+
+def noext(path):
+	return os.path.splitext(path)[0]

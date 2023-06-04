@@ -17,6 +17,10 @@ main article {
 	margin: 1em;
 }
 
+footer .disabled {
+	color: lightgrey;
+}
+
 time[pubdate] { color: lightgrey }
 
 blockquote .black { color: rgba(10,20,30,var(--opacity)) }
@@ -83,7 +87,7 @@ nav { background-color: var(--bg-menu) }
 	font-size: 1rem;
 }
 .navbar .active {
-	color: grey;
+	color: steelblue;
 }
 .navbar .disabled {
 	color: lightgrey;
