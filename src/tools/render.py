@@ -20,7 +20,7 @@ def main(argv=sys.argv):
 def generate(p, aa):
 	#~ splitter = re.compile(r'\{\{\s*(.+?)\s*\}\}')
 	#~ splitter = re.compile(r'(?P<pre>[ \t]*)(?:\{\{\s*(?P<cmd>.+?)\s*\}\})(?P<post>\r\n|\r|\n)')
-	splitter = re.compile(r'((?:^[ \t]+)?)\{\{\s*(.+?)\s*\}\}', re.MULTILINE)
+	splitter = re.compile(r'((?:^[ \t]+)?)((?:[#]\s*)?)\{\{\s*(.+?)\s*\}\}', re.MULTILINE)
 	text = open(aa.ipath, encoding="utf-8").read()
 	with tools.oopen(aa.opath, force=True) as ofile:
 		for key, chunk in tools.rsplit(text, splitter):
@@ -35,7 +35,8 @@ def log(p, aa, e):
 		traceback.print_exception(e, file=ferr)
 
 def process(p, aa, groups):
-	prefix, cmd = groups
+	prefix, cmt, cmd = groups
+	if cmt: return ""
 	#~ print("|%s| |%s| (%d)" % (cmd, prefix, len(prefix)))
 	try: cmd = cmd.format(p=p, aa=aa, prefix=prefix, **aa.args)
 	except KeyError as e:
