@@ -1,0 +1,124 @@
+.alert {
+	display: none;
+}
+
+body {
+	padding: .5rem;
+	font-family: serif;
+}
+
+header {
+	display: grid;
+	grid-template-columns: auto 1rem 1fr;
+	grid-template-rows: 1fr auto;
+	padding: 1em;
+	background-color: #eee;
+	box-shadow: 0 .5em .5em rgba(0, 0, 0, .3);
+	padding-top: 2em;
+	margin-bottom: 2em;
+}
+
+header > img {
+	grid-column: 1;
+	grid-row: 1 / 2;
+}
+
+header > h1 {
+	grid-column: 3;
+	grid-row: 1;
+	font-size: 3rem;
+	font-weight: bold;
+	margin: 0;
+	padding: 0;
+}
+
+header > h1 > span:nth-child(2) {
+	display: block;
+	font-size: .6em;
+}
+
+header > time {
+	grid-column: 1 / 4;
+	grid-row: 2;
+	text-align: right;
+}
+
+.ws-nowrap {
+	white-space: nowrap;
+}
+
+nav {
+	display: flex;
+	flex-flow: column nowrap;
+}
+
+nav > a {
+	padding: 1em;
+	font-family: sans;
+	font-weight: bold;
+	color: #333;
+	border-bottom: thin solid grey;
+}
+
+nav img {
+	display: none;
+}
+
+p {
+	line-height: 1.6rem;
+}
+
+.table-wrapper {
+	overflow: auto;
+}
+
+div[id=info] > section {
+	display: inline-block;
+	margin: 1em 0;
+}
+
+#momart-jetzt img {
+	float: left;
+	width: 25%;
+	margin: 0 1em .5em 1em;
+	border: thin solid grey;
+}
+
+.news {
+	display: flex;
+	flex-flow: column;
+	padding-bottom: 1em;
+	margin-bottom: 2em;
+	border-bottom: thin solid grey;
+}
+
+.news > time {
+	color: black;
+	font-weight: bold;
+	background-color: #eee;
+	padding: .4em;
+}
+
+.news > a {
+	color: steelblue;
+	font-weight: bold;
+	align-self: flex-end;
+}
+
+.advert img {
+	margin: 0 auto 2em;
+}
+
+@media screen and (min-width:480px) {
+	p {
+		font-size: calc(1rem + 1vh);
+		line-height: calc(1.4rem + 1vh);
+	}
+}
+@media screen and (min-width:768px) {
+	nav {
+		flex-flow: row nowrap;
+	}
+}
+@media screen and (min-width:1200px) {
+}

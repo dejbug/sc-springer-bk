@@ -1,13 +1,13 @@
 {{ cat content/html-header.html }}
 {{ python tools/render.py content/navbar.html active=vereinsturniere }}
-{{ cat content/header.html }}
+{{ python tools/render.py content/header.html }}
 
 <main>
 <article>
 
 <h1>Blitzturnier August 2022</h1>
 
-<div class="of-a">
+<div class="table-wrapper">
 {{ python tools/csv2table.py tables/blitz-22-08.csv }}
 </div>
 

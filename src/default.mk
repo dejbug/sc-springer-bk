@@ -9,11 +9,11 @@ HTML := $(HTML:%=dist/%)
 all : $(HTML) $(MISC)
 
 ifneq ($(VENDOR),0)
-all : dist/vendor/
+all : dist/vendor/ dist/vendor/*
 endif
 
 ifneq ($(LEARNING),0)
-all : dist/learning/
+all : dist/learning/ dist/learning/*
 endif
 
 dist/index.php : tools/index.php ; $(call FCOPY,$<,dist)

@@ -53,12 +53,18 @@ def printnews(ipath):
 			print()
 		print()
 
+def germandate(t):
+	months = ["", "Januar", "Februar", "März", "April", "Mai", "Juni",
+		"Juli", "August", "September", "Oktober", "November", "Dezember"]
+	return "%d. %s %4d" % (t.day, months[t.month], t.year)
+
 def printhtml(ipath, ofile=sys.stdout, prefix=""):
 	for news in iter(ipath):
-		ofile.write(prefix + '<article>\n')
+		ofile.write(prefix + '<article class="news">\n')
 		ofile.write(prefix + '\t<time datetime="%s">%s</time>\n' % (
 			news["time"].strftime("%Y-%m-%dT%H:%M:00"),
-			news["time"].strftime("%Y-%m-%d / %H:%M")
+			# news["time"].strftime("%Y-%m-%d / %H:%M")
+			germandate(news["time"])
 		))
 		ofile.write(prefix + '\t<p>%s</p>\n' % news["text"])
 		if "link" in news:

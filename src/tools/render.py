@@ -17,15 +17,6 @@ def main(argv=sys.argv):
 	aa.args = {k : v for k, v in (s.split("=") for s in aa.args if "=" in s)}
 	generate(p, aa)
 
-def generate(p, aa):
-	#~ splitter = re.compile(r'\{\{\s*(.+?)\s*\}\}')
-	#~ splitter = re.compile(r'(?P<pre>[ \t]*)(?:\{\{\s*(?P<cmd>.+?)\s*\}\})(?P<post>\r\n|\r|\n)')
-	splitter = re.compile(r'((?:^[ \t]+)?)((?:[#]\s*)?)\{\{\s*(.+?)\s*\}\}', re.MULTILINE)
-	text = open(aa.ipath, encoding="utf-8").read()
-	with tools.oopen(aa.opath, force=True) as ofile:
-		for key, chunk in tools.rsplit(text, splitter):
-			ofile.write(process(p, aa, chunk) if key else chunk)
-
 def log(p, aa, e):
 	if aa.epath:
 		ferr = open(aa.epath, "a", encoding="utf-8")
@@ -33,6 +24,15 @@ def log(p, aa, e):
 		pprint.pprint(aa.__dict__, stream=ferr, sort_dicts=False)
 		ferr.write("\n")
 		traceback.print_exception(e, file=ferr)
+
+def generate(p, aa):
+	#~ splitter = re.compile(r'\{\{\s*(.+?)\s*\}\}')
+	#~ splitter = re.compile(r'(?P<pre>[ \t]*)(?:\{\{\s*(?P<cmd>.+?)\s*\}\})(?P<post>\r\n|\r|\n)')
+	splitter = re.compile(r'((?:^[ \t]+)?)((?:[#][ \t]*)?)\{\{\s*(.+?)\s*\}\}', re.MULTILINE)
+	text = open(aa.ipath, encoding="utf-8").read()
+	with tools.oopen(aa.opath, force=True) as ofile:
+		for key, chunk in tools.rsplit(text, splitter):
+			ofile.write(process(p, aa, chunk) if key else chunk)
 
 def process(p, aa, groups):
 	prefix, cmt, cmd = groups

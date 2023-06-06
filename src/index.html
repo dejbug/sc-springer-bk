@@ -1,20 +1,8 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="keywords" content="chess, schach, verein, sport, hessen, odenwald, bad könig">
-	<meta name="description" content="Homepage des Schachclubs SC Springer Bad König">
-	<title>SC Springer Bad König</title>
-	<link rel="favicon" href="favicon.ico">
-	<link rel="stylesheet" href="default.css">
-</head>
-<body>
+{{ cat content/html-header.html }}
 
 <div class="alert">
 	<p class="me-auto">Wir haben erst {{ tools/scheine.sh }} Scheine! Helft uns sammeln!</p>
-	<a href="https://scheinefuervereine.rewe.de#verein-10000037078?ecid=cop_widget_sfv2023_toolkit_widget_nn_nn_nn" target="_blank"><img src="vendor/rewe/img/sfv_widget_240x45px.png" alt="REWE Scheine für Vereine | Schachclub Springer Bad König e.V." width="240" height="45" class="me-3"></a>
+	<a href="https://scheinefuervereine.rewe.de#verein-10000037078" target="_blank"><img src="vendor/rewe/img/sfv_widget_240x45px.png" alt="REWE Scheine für Vereine | Schachclub Springer Bad König e.V." width="240" height="45" class="me-3"></a>
 </div>
 
 {{ python tools/render.py content/navbar.html active=index }}
@@ -24,23 +12,8 @@
 
 <img class="w-100 mb-1" src="img/foto.jpg">
 
-<div class="row">
-	<div id="info" class="col-md-6 col-lg-8">
-		{{ cat content/wann_wo.html | sed 's/^/{prefix}/' }}
-		{{ cat content/momart_jetzt.html | sed 's/^/{prefix}/' }}
-		<section>
-			<h2>Spielbericht (12. Feb. 23)</h2>
-			<p>Am 6. Spieltag der Schachverbandsrunden verbuchte der SC Springer ein Unentschieden und eine Niederlage. Der Bezirksligist kam nach wechselnder Führung zu einem schiedlichen 3,5 : 3,5, während Bad König II 1,5 : 3,5 gegen Schaafheim 2 unterlag. ... Weiterlesen</p>
-		</section>
-	</div>
-	<div class="col-md-6 col-lg-4">
-		<section id="news">
-			<h2>Neuigkeiten</h2>
-			<a href="https://scheinefuervereine.rewe.de#verein-10000037078?ecid=cop_widget_sfv2023_toolkit_widget_nn_nn_nn" target="_blank"><img src="vendor/rewe/img/sfv_widget_420x500px.png" alt="REWE Scheine für Vereine | Schachclub Springer Bad König e.V." width="420" height="500" class="mh-auto mb-2 rounded"></a>
-			{{ python tools/news.py --mode html --prefix "{prefix}" }}
-		</section>
-	</div>
-</div>
+{{ cat content/wann_wo.html | sed 's/^/{prefix}/' }}
+{{ cat content/momart_jetzt.html | sed 's/^/{prefix}/' }}
 
 </main>
 {{ python tools/render.py content/footer.html }}
