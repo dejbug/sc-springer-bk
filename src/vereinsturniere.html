@@ -3,38 +3,115 @@
 {{ python tools/render.py content/header.html }}
 
 <main>
-<article>
 
 <h1>Vereinsturniere</h1>
 
-<div class="row">
+<article id="turniere">
 
-	<div class="col-md-6 col-lg-4">
-		<h2>Pokal</h2>
+<div>
+	<p>Jeden ersten Freitag im Monat finden im Wechsel Blitz- und Schnellschachrunden statt.</p>
 
-		<p><a href="pokal-22.html">Pokalturnier 2022</a></p>
+	<p>Jedes Jahr wird eine Vereinsmeisterschaft sowie eine Pokalrunde gespielt.</p>
 
-		<h2>Blitz</h2>
+	<p>In der Vereinsmeisterschaft gibt es die Gruppen Meister A sowie Meister B. Die zwei letztplatzierten der Meisterschaft A steigen ab und die zwei erstplatzierten der Meisterschaft B steigen auf.</p>
+</div>
 
-		<p><a href="blitz-22-08.html">Blitzturnier 2022 August</a></p>
-		<p><a href="blitz-22-09.html">Blitzturnier 2022 September</a></p>
 
-		<h2>Grand-Prix</h2>
+<div>
+	<table id="turniere-table">
+		<thead>
+			<tr>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th>1</th>
+				<th>2</th>
+				<th>3</th>
+				<th>4</th>
+				<th>5</th>
+				<th>6</th>
+				<th>7</th>
+				<th>8</th>
+				<th>9</th>
+				<th>10</th>
+				<th>11</th>
+				<th>12</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>2022</td>
+				<td><a href="pokal-22.html">P</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td><a href="blitz-22-08.html">B</a></td>
+				<td><a href="blitz-22-09.html">B</a></td>
+				<td><a href="blitz-22-10.html">B</a></td>
+				<td><a href="blitz-22-11.html">B</a></td>
+				<td><a href="blitz-22-12.html">B</a></td>
+			</tr>
+			<tr>
+				<td colspan="10"></td>
+				<td colspan="5"><a href="gp-22-08-12.html">GP</a></td>
+			</tr>
+			<tr>
+				<td>2023</td>
+				<td></td>
+				<td></td>
+				<td><a href="blitz-23-01.html">B</a></td>
+				<td>S</td>
+				<td>B</td>
+				<td>S</td>
+				<td>B</td>
+				<td>S</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td colspan="3"></td>
+				<td colspan="5">GP</td>
+				<td colspan="7"></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
 
-		<p><a href="blitz-gp-22-08-12.html">Grand-Prix 2022 August-Dezember</a></p>
-	</div>
+<div>
 
-	<div class="col-md-6 col-lg-6">
-		<p>Jeden ersten Freitag im Monat finden im Wechsel Blitz- und Schnellschachrunden statt.</p>
+<h2>Pokal</h2>
 
-		<p>Jedes Jahr wird eine Vereinsmeisterschaft sowie eine Pokalrunde gespielt.</p>
+<p><a href="pokal-22.html">Pokalturnier 2022</a></p>
 
-		<p>In der Vereinsmeisterschaft gibt es die Gruppen Meister A sowie Meister B. Die zwei letztplatzierten der Meisterschaft A steigen ab und die zwei erstplatzierten der Meisterschaft B steigen auf.</p>
-	</div>
+<h2>Grand-Prix</h2>
+
+<p><a href="gp-22-08-12.html">Grand-Prix 2022 August-Dezember</a></p>
+
+<h2>Blitz</h2>
+
+<p><a href="blitz-22-08.html">Blitzturnier 2022 August</a></p>
+<p><a href="blitz-22-09.html">Blitzturnier 2022 September</a></p>
+<p><a href="blitz-22-10.html">Blitzturnier 2022 Oktober</a></p>
+<p><a href="blitz-22-11.html">Blitzturnier 2022 November</a></p>
+<p><a href="blitz-22-12.html">Blitzturnier 2022 Dezember</a></p>
+<p><a href="blitz-23-01.html">Blitzturnier 2023 Januar</a></p>
+
+<!-- <h2>Schnell</h2> -->
 
 </div>
 
+
 </article>
+
 </main>
 
 {{ python tools/render.py content/footer.html }}

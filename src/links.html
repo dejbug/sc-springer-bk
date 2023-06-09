@@ -1,0 +1,22 @@
+{{ cat content/html-header.html }}
+{{ python tools/render.py content/navbar.html active=links }}
+{{ python tools/render.py content/header.html }}
+
+<main>
+
+<h1>Links</h1>
+
+<article>
+
+<p>Unser Schachbezirk: <a href="https://schach-in-starkenburg.de/">Schach in Starkenburg</a></p>
+<p><a href="http://www.hessischer-schachverband.de/">Hessischer Schachverband</a></p>
+<p><a href="http://hessische-schachjugend.de/">Hessische Schachjugend</a></p>
+<p><a href="https://www.schachbund.de/">Deutscher Schachbund</a></p>
+<p><a href="https://www.schachbund.de/verein/56025.html">DWZ-Liste</a></p>
+
+</article>
+
+</main>
+
+{{ python tools/render.py content/footer.html }}
+{{ cat content/html-footer.html }}

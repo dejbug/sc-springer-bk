@@ -3,11 +3,12 @@
 {{ python tools/render.py content/header.html }}
 
 <main>
-<article>
 
 <h1>Blitzturnier August 2022</h1>
 
-<div class="table-wrapper">
+<article>
+
+<div class="table-wrapper crosstable">
 {{ python tools/csv2table.py tables/blitz-22-08.csv }}
 </div>
 

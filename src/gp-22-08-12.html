@@ -1,0 +1,62 @@
+{{ cat content/html-header.html }}
+{{ python tools/render.py content/navbar.html active=vereinsturniere }}
+{{ python tools/render.py content/header.html }}
+
+<main>
+
+<h1>Grand-Prix Aug-Dez 2022</h1>
+
+<article>
+
+<div class="table-wrapper crosstable">
+<table>
+	<thead>
+		<tr>
+			<th>Platz</th>
+			<th>Name</th>
+			<th>Punkte</th>
+			<th>Turniere</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>1</td>
+			<td>Daniel Anton</td>
+			<td>35</td>
+			<td>3+1</td>
+		</tr>
+		
+		<tr>
+			<td>2</td>
+			<td>Benedikt Brunner</td>
+			<td>34</td>
+			<td>3+1</td>
+		</tr>
+		
+		<tr>
+			<td>3</td>
+			<td>Reiner Messer</td>
+			<td>21</td>
+			<td>3</td>
+		</tr>
+	</tbody>
+</table>
+</div>
+
+<h2 class="section-title">Beste Turnierergebnisse</h2>
+
+<div class="table-wrapper crosstable nolast">
+{{ python tools/csv2table.py tables/gp-22-08-12-single.csv }}
+</div>
+
+<h2 class="section-title">Kumulativ (<small>letzten x Turniere</small>)</h2>
+
+<div class="table-wrapper crosstable nolast">
+{{ python tools/csv2table.py tables/gp-22-08-12-cumulative.csv }}
+</div>
+
+</article>
+</main>
+
+{{ python tools/render.py content/footer.html }}
+{{ cat content/html-footer.html }}

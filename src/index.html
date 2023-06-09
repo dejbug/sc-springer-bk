@@ -1,21 +1,19 @@
 {{ cat content/html-header.html }}
-
-<div class="alert">
-	<p class="me-auto">Wir haben erst {{ tools/scheine.sh }} Scheine! Helft uns sammeln!</p>
-	<a href="https://scheinefuervereine.rewe.de#verein-10000037078" target="_blank"><img src="vendor/rewe/img/sfv_widget_240x45px.png" alt="REWE Scheine für Vereine | Schachclub Springer Bad König e.V." width="240" height="45" class="me-3"></a>
-</div>
-
 {{ python tools/render.py content/navbar.html active=index }}
+{{ python tools/render.py content/scheine-fuer-vereine.html }}
 {{ python tools/render.py content/header.html }}
 
 <main>
 
-<img class="w-100 mb-1" src="img/foto.jpg">
+<div class="cols-2">
+<img src="img/foto.jpg">
 
 {{ cat content/wann_wo.html | sed 's/^/{prefix}/' }}
 {{ cat content/momart_jetzt.html | sed 's/^/{prefix}/' }}
+</div>
 
 </main>
+
 {{ python tools/render.py content/footer.html }}
 </body>
 </html>

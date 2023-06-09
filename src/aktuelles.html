@@ -1,5 +1,5 @@
 {{ cat content/html-header.html }}
-{{ python tools/render.py content/navbar.html active=jugendschach }}
+{{ python tools/render.py content/navbar.html active=aktuelles }}
 {{ python tools/render.py content/header.html }}
 
 <main>
@@ -8,7 +8,11 @@
 
 <div class="advert"><a href="https://scheinefuervereine.rewe.de#verein-10000037078" target="_blank"><img src="vendor/rewe/img/sfv_widget_420x500px.png" alt="REWE Scheine für Vereine | Schachclub Springer Bad König e.V." class="mh-auto mb-2 rounded"></a></div>
 
+<div class="news-container">
+
 {{ python tools/news.py --mode html --prefix "{prefix}" }}
+
+</div>
 
 </main>
 
