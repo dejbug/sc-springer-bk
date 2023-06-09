@@ -55,34 +55,56 @@ def collapse_tabs(text):
 	"""
 	return re.sub(r"\t+", ",", text)
 
-def translate_score(score):
-	"""
-	>>> translate_score("1")
-	1
-	>>> translate_score("1:0")
-	1
-	>>> translate_score("0")
-	0
-	>>> translate_score("0:1")
-	0
-	>>> translate_score("2")
-	>>> translate_score("0:0")
-	Traceback (most recent call last):
-	ValueError: invalid score "0:0"
-	>>> translate_score("0.5")
-	0.5
-	>>> translate_score("0.5:0.5")
-	0.5
-	"""
-	m = re.match(r"(0\.5|0|1)(?:[-:](0\.5|0|1))?", score)
-	if not m: return None
-	w, b = m.groups()
-	w = int(w) if len(w) == 1 else .5
-	if b:
-		b = int(b) if len(b) == 1 else .5
-		if b != 1 - w:
-			raise ValueError("invalid score \"%s\"" % score)
-	return w
+class Score:
+	SCORE_FLAG_ASTERISK = 1
+
+	def __init__(self, score, flags, strict=None):
+		self.score = score
+		self.flags = flags
+		self.strict = strict
+
+	def __repr__(self):
+		return self.__class__.__name__ + str(self.__dict__)
+
+	@classmethod
+	def parse(cls, score, strict=True):
+		"""
+		>>> Score.parse("1")
+		Score{'score': 1, 'flags': 0, 'strict': True}
+		>>> Score.parse("1:0")
+		Score{'score': 1, 'flags': 0, 'strict': True}
+		>>> Score.parse("0")
+		Score{'score': 0, 'flags': 0, 'strict': True}
+		>>> Score.parse("0:1")
+		Score{'score': 0, 'flags': 0, 'strict': True}
+		>>> Score.parse("0.5")
+		Score{'score': 0.5, 'flags': 0, 'strict': True}
+		>>> Score.parse("0.5:0.5")
+		Score{'score': 0.5, 'flags': 0, 'strict': True}
+		>>> Score.parse("0.5*")
+		Score{'score': 0.5, 'flags': 1, 'strict': True}
+		>>> Score.parse(".5*")
+		Score{'score': 0.5, 'flags': 1, 'strict': True}
+		>>> Score.parse("2")
+		>>> Score.parse("0:0")
+		Traceback (most recent call last):
+		ValueError: invalid score "0:0"
+		"""
+		m = re.match(r"(0?\.5|0|1)(?:[-:](0?\.5|0|1))?(.*)?", score)
+		if not m: return None
+		w, b, f = m.groups()
+		w = int(w) if len(w) == 1 else .5
+		if strict and b:
+			b = int(b) if len(b) == 1 else .5
+			if b != 1 - w:
+				raise ValueError("invalid score \"%s\"" % score)
+
+		flags = 0
+		if f:
+			if "*" in f: flags |= cls.SCORE_FLAG_ASTERISK
+			elif strict:
+				raise ValueError("invalid flags \"%s\"" % f)
+		return cls(w, flags, strict)
 
 class People:
 	def __init__(self):
@@ -111,15 +133,11 @@ class People:
 			print("%3d" % pid, name)
 		print()
 
-#~ def add_player(players, name):
-	#~ if not players:
-		#~ players["n2i"] = {}
-		#~ players["i2n"] = {}
-	#~ if name in players["n2i"]: return players["n2i"][name]
-	#~ pid = len(players["n2i"]) + 1
-	#~ players["n2i"][name] = pid
-	#~ players["i2n"][pid] = name
-	#~ return pid
+	def __str__(self):
+		s = io.StringIO()
+		for name, pid in self.name2id.items():
+			s.write("%3d %s\n" % (pid, name))
+		return s.getvalue()
 
 class Game:
 	def __init__(self, pid, oid, score, white, rid=0):
@@ -170,6 +188,12 @@ class Player:
 	def add_game(self, game):
 		self.games[game.oid] = game
 		self.total += game.score
+
+	def has_played(self, oid):
+		for g in self.games.values():
+			if g.oid == oid:
+				return True
+		return False
 
 	def __str__(self):
 		#~ return "Player%s" % { k: self.__dict__[k] for k in ["id", "total", "rank"] }
@@ -224,6 +248,13 @@ class Players:
 		self.get(w.pid).add_game(w)
 		self.get(b.pid).add_game(b)
 
+	def has_match(self, match):
+		w = self.get(match.wid)
+		b = self.get(match.bid)
+		if not w.has_played(match.bid): return False
+		if not b.has_played(match.wid): return False
+		return True
+
 	def sort_by_name(self, people=None, reverse=False):
 		# (Usually) Assumes self.resolve()  was called.
 		if people: self.resolve(people)
@@ -271,52 +302,85 @@ class Players:
 			print(p)
 		print()
 
-#~ def add_match(matches, w, b, s, r):
-	#~ if w not in matches:
-		#~ matches[w] = {"score": s, b : {"score": s, "white": True, "round": r}}
-	#~ else:
-		#~ matches[w][b] = {"score": s, "white": True, "round": r}
-		#~ matches[w]["score"] += s
+	def __str__(self):
+		s = io.StringIO()
+		for p in self:
+			s.write("%s\n" % p)
+		return s.getvalue()
 
-	#~ if b not in matches:
-		#~ matches[b] = {"score": 1 - s, w : {"score": 1 - s, "white": False, "round": r}}
-	#~ else:
-		#~ matches[b][w] = {"score": 1 - s, "white": False, "round": r}
-		#~ matches[b]["score"] += 1 - s
+class Table:
+	def __init__(self, filler=None):
+		self.filler = filler
+		self.rows = []
 
-#~ def sorted_ranking(matches, people=None):
-	#~ xx = ({"pid": wid, "score": info["score"]} for wid, info in matches.items())
-	#~ if people: xx = sorted(xx, key=lambda x: people.name(x["pid"]), reverse=False)
-	#~ xx = sorted(xx, key=lambda x: x["score"], reverse=True)
+	def set(self, row, col, data):
+		self.ensure_row_exits(row)
+		self.ensure_col_exists(col)
+		self.rows[row][col] = data
 
-	#~ s = -1
-	#~ i = 0
-	#~ for x in xx:
-		#~ if s != x["score"]:
-			#~ s = x["score"]
-			#~ i += 1
-		#~ x["rank"] = i
+	def ensure_row_exits(self, row):
+		colcount = self.colcount
+		need = row + 1 - len(self.rows)
+		if need > 0:
+			for _ in range(need):
+				self.rows.append([self.filler] * colcount)
 
-	#~ return xx
+	def ensure_col_exists(self, col):
+		colcount = len(self.rows[0]) if self.rows else 0
+		need = col + 1 - colcount
+		if need > 0:
+			for row in self.rows:
+				row.extend([self.filler] * need)
+
+	@property
+	def rowcount(self):
+		return len(self.rows)
+
+	@property
+	def colcount(self):
+		return len(self.rows[0]) if self.rows else 0
+
+	def __str__(self):
+		s = io.StringIO()
+		s.write("Table %d %d\n" % (self.rowcount, self.colcount))
+		for i, row in enumerate(self.rows):
+			s.write("%d:" % i)
+			for cell in row:
+				s.write(" %s" % cell)
+			s.write("\n")
+		return s.getvalue()
 
 def parse(path):
 	with open(path, "r", encoding="utf-8") as file:
 		t = determine_csv_type(file)
-		if t == "t/RWSE":
+		if t.startswith("t/"):
 			reader = csv.reader(map(collapse_tabs, file))
 			rows = [line for line in reader]
 		else:
-			raise Exception("unknown CSV type")
+			reader = csv.reader(file)
+			rows = [line for line in reader]
+		#~ else:
+			#~ raise Exception("unknown CSV type: %s" % t)
 
 	people = People()
 	players = Players()
 
-	for r, w, b, s in rows:
-		#~ print(r, w, b, s)
-		w = people.add(w)
-		b = people.add(b)
-		s = translate_score(s)
-		players.add_match(Match(w, b, s, int(r)))
+	if t.endswith("RWSE"):
+		for r, w, b, s in rows:
+			w = people.add(w)
+			b = people.add(b)
+			s = Score.parse(s)
+			players.add_match(Match(w, b, s.score, int(r)))
+	elif t.endswith("#NP"):
+		for row in rows:
+			i = people.add(row[1])
+		for i, row in enumerate(rows):
+			for j, c in enumerate(row[2:-1]):
+				if i == j: continue
+				s = Score.parse(c)
+				m = Match(i + 1, j + 1, s.score)
+				if not players.has_match(m):
+					players.add_match(m)
 
 	return people, players
 
@@ -339,52 +403,6 @@ def empty_crosstable(pc):
 
 	return table
 
-#~ def crosstable(people, matches=None):
-	#~ table = empty_crosstable(len(people))
-
-	#~ if not matches:
-		#~ return table
-
-	#~ ranking = sorted_ranking(matches, people)
-	#~ for rinfo in ranking:
-		#~ print(rinfo)
-	#~ print()
-
-	#~ r2i = [0] + [x["pid"] for x in ranking]
-	#~ i2r = [0] + [None] * len(ranking)
-	#~ for rank, x in enumerate(ranking, start=1):
-		#~ i2r[x["pid"]] = rank
-	#~ print("r2i", r2i)
-	#~ print("i2r", i2r)
-	#~ print()
-
-	#~ for x in ranking:
-		#~ pid = x["pid"]
-		#~ prank = i2r[x["pid"]]
-		#~ print(pid, prank, end=" : ")
-		#~ info = matches[pid]
-		#~ for oid in range(1, len(ranking)+1):
-			#~ if oid in info:
-				#~ orank = i2r[oid]
-				#~ print(oid, "(%d)" % orank, end=" ")
-				#~ table[pid][oid] = info[oid]["score"]
-		#~ table[prank][-1] = info["score"]
-		#~ print()
-	#~ print()
-
-	#~ unique_scores = sorted(set(x["score"] for x in ranking), reverse=True)
-	#~ print(unique_scores)
-	#~ needs_rank_column = len(unique_scores) < len(ranking)
-	#~ print(needs_rank_column)
-	#~ print()
-
-	#~ if needs_rank_column:
-		#~ table[0].append("Platz")
-		#~ for i, row in enumerate(table[1:], start=1):
-			#~ row.append(list_index_of(unique_scores, table[i][-1]) + 1)
-
-	#~ return table
-
 def crosstable(players, show_white=None):
 	table = empty_crosstable(len(players))
 
@@ -401,11 +419,18 @@ def crosstable(players, show_white=None):
 		for p in players:
 			table[p.rank].append(str(p.place))
 
-	table[0][1:2] = ["Name"]
+	table[0][1:1] = ["Name"]
 	for p in players:
-		table[p.rank][1:2] = [p.name]
+		table[p.rank][1:1] = [p.name]
 
 	return table
+
+def render(inpath):
+	people, players = parse(inpath)
+	players.sort_by_name(people)
+	players.sort_by_score()
+	players.update_placing()
+	return people, players, crosstable(players)
 
 if __name__ == "__main__":
 	p, aa = parse_args()
@@ -416,7 +441,7 @@ if __name__ == "__main__":
 		exit()
 
 	people, players = parse(aa.file)
-	#~ people.print()
+	#~ print(people)
 
 	players.sort_by_name(people)
 	players.sort_by_score()
