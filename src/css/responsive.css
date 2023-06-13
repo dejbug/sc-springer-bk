@@ -1,5 +1,10 @@
 /************* TOOLS */
 
+a {
+	color: steelblue;
+	font-weight: bold;
+}
+
 .subtitled {
 	display: flex;
 	flex-flow: row wrap;
@@ -130,6 +135,10 @@ footer {
 	padding: 1em;
 	margin-top: 1em;
 	text-align: right;
+}
+
+footer > * {
+	margin-left: 3em;
 }
 
 /************* NAV */
