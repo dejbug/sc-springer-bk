@@ -161,7 +161,8 @@ nav .active {
 /************* NEWS */
 
 .news-container {
-	display: grid;
+	display: flex;
+	flex-flow: row wrap;
 }
 
 .news {
@@ -169,9 +170,8 @@ nav .active {
 	flex-flow: column;
 	padding-bottom: 1em;
 	margin-bottom: 1em;
-	border-bottom: thin solid lightgrey;
 	break-inside: avoid;
-	max-width: 37em;
+	width: 100%;
 }
 
 .news > time {
@@ -181,14 +181,15 @@ nav .active {
 	padding: .4em;
 }
 
-.news > a {
+.news a {
 	color: steelblue;
 	font-weight: bold;
 	align-self: flex-end;
 }
 
 .news > p {
-	padding: 0 1em;
+	padding: 0 .3em;
+	margin: .6em 0;
 }
 
 /************* ADS */
@@ -264,8 +265,8 @@ nav .active {
 		line-height: calc(1.4rem + 1vh);
 	}
 	.news-container {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
+		// display: grid;
+		// grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
 	}
 }
 
@@ -295,10 +296,10 @@ nav .active {
 		border-bottom: 0;
 	}
 	.advert img {
-		margin: 0;
-		margin-left: 1em;
-		max-width: 417px;
-		float: right;
+		// margin: 0;
+		// margin-left: 1em;
+		// max-width: 417px;
+		// float: right;
 	}
 	img[src="img/foto.jpg"] {
 		border-radius: 4px;
@@ -325,6 +326,12 @@ nav .active {
 	#turniere > div:nth-child(3) {
 		grid-row: 2;
 		grid-column: 1;
+	}
+	.news {
+		width: 68em;
+	}
+	.news.card {
+		width: 34em;
 	}
 }
 

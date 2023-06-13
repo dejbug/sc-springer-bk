@@ -27,6 +27,8 @@ dist/vereinsturniere.html : dist/pokal-22.html
 dist/blitz-*.html : dist/blitz-%.html : tables/blitz-%.csv tools/csv2table.py tools/tables.py
 dist/schnell-*.html : dist/schnell-%.html : tables/schnell-%.csv tools/csv2table.py tools/tables.py
 
+dist/aktuelles.html : content/news.txt tools/news.py
+
 # HACKS
 
 tables/schnell-23-06.csv : tables/schnell-23-06-games.csv

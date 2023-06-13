@@ -1,37 +1,44 @@
-21.2.23 / 22:23
+13.6.23
+Diesen Freitag wollen wir entscheiden, ob wir das Angebot annehmen, <a href="https://schach-in-starkenburg.de/index.php/81-aktuelles/834-saison-2023-24-auschreibung">in die höhere Klasse aufzusteigen</a>.
+Mittlerweile haben wir nämlich wieder so viele Spieler, eine dritte Mannschaft aufstellen zu können, aber leider zu wenige Fahrer.
+
+9.6.23
+Wir sammeln Scheine-für-Vereine! <div class="advert"><a href="https://scheinefuervereine.rewe.de#verein-10000037078" target="_blank"><img src="vendor/rewe/img/sfv_widget_420x500px.png" alt="REWE Scheine für Vereine | Schachclub Springer Bad König e.V."></a></div>
+
+21.2.23
 Benedikt Brunner ist der Sieger des Pokalturniers 2022!
-"Pokalturnier 2022/23"
+"Pokalturnier 2022/23" => pokal-22.html
 
-30.1.23 / 19:30
+30.1.23
 Als spannenden Abschluss des Pokalturniers 2022 freuen wir uns auf das Spiel der Finalisten Brunner versus Wenzel.
-"Pokalturnier 2022/23"
+"Pokalturnier 2022/23" => pokal-22.html
 
-13.12.22 / 12:14
+13.12.22
 Herzlichen Glückwunsch unserem Jugendleiter Daniel Anton zu seinem wohlverdienten 1. Platz im August-Dezember Blitzmarathon (knapp gefolgt von Benedikt Brunner)!
-"zur Rangliste"
+"zur Rangliste" => gp-22-08-12.html
 
-2.12.22 / 17:47
+2.12.22
 Wir haben die letzten 4 Blitzturniere endlich aufaddiert! Noch eins steht im Dezember aus, dann stehen die Gewinner fest.
-"zur Gesamttabelle"
+"zur Gesamttabelle" => gp-22-08-12.html
 
-13.11.22 / 19:33
+13.11.22
 Der Turnierleiter dankt allen die am November Blitzturnier teilnehmen konnten.
-"zur Tabelle"
+"zur Tabelle" => blitz-22-11.html
 
-9.11.22 / 10:31
+9.11.22
 Mit unterschiedlichem Ausgang gingen die beiden Mannschaften des SC Springer Bad König am 3. Spieltag der Schachverbandsrunden hervor. ...
 "zum Spielbericht"
 
-27.10.22 / 10:34
+27.10.22
 Die nächsten beiden Vereinsabende wurden auf die Donnerstage vorgezogen. Also am 27.10 (heute) und am 3.11.
 
-15.10.22 / 16:44
+15.10.22
 Gestern fand unser (verschobenes) Oktober-Blitzturnier statt
-"zur Tabelle"
+"zur Tabelle" => blitz-22-10.html
 
-11.10.22 / 21:20
+11.10.22
 Am Wochenende fand die zweite Runde der Verbandswettkämpfe statt. ...
 "zum Spielbericht"
 
-8.10.22 / 12:00
+8.10.22
 Einige Spieler sind verhindert und so kriegen wir am Sonntag leider keine 2. Mannschaft mehr zusammen.

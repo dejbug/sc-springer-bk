@@ -5,46 +5,57 @@ import tools
 
 def iter(ipath):
 	news = {}
-	for key, item in parsefile(ipath):
-		if key == 0 and news:
-			yield news
-			news = {}
-		if key in range(3):
-			news.update(parseitem(key, item))
-	if news:
-		yield news
+	for block in iter_blocks(ipath):
+		yield parse_block(block)
 
-def parsefile(ipath):
-	pat = [
-		re.compile(r'^\s*(\d\d?)\.(\d\d?).(\d{2,4})\s*.\s*(\d\d?):(\d\d?)'),
-		re.compile(r'(.+)'),
-		re.compile(r'\s*(?:"(.+?)")?(?:\s*(.+))?'),
-	]
-
-	state = 0
-	with open(ipath) as file:
+def iter_blocks(ipath):
+	block = []
+	with open(ipath, encoding="utf8") as file:
 		for line in file:
 			line = line.strip()
-			if not line: state = 0; continue
-			if not state in range(3): break
-			x = pat[state].match(line)
-			if not x: state = 3; continue
-			yield state, x.groups()
-			state += 1
+			if line:
+				block.append(line)
+			else:
+				if block: yield block
+				block = []
+	if block: yield block
 
-def parseitem(key, item):
-	if key == 0: return { "time": parsetime(item) }
-	if key == 1: return { "text": item[0] }
-	if key == 2: return { "link": item[0], "url": item[1] }
+def parse_block(block):
+	news = {}
+
+	m = re.match(r'^\s*(\d\d?)\.(\d\d?).(\d{2,4})\s*(?:.\s*(\d\d?):(\d\d?))?', block[0])
+	if m: news["time"] = parsetime(m.groups())
+
+	m = re.match(r'^\s*"(.+?)"(?:\s*=>\s*(.+))?', block[-1])
+	if m:
+		news["link"] = m.group(1)
+		news["url"] = m.group(2)
+
+	news["lines"] = [line.strip() for line in block[1:(-1 if "link" in news else None)]]
+	news["text"] = " ".join(news["lines"])
+
+	return news
 
 def parsetime(seq):
-	t = list(int(e) for e in seq)
+	t = list(int(e) for e in seq if e is not None)
 	if t[2] < 2000: t[2] += 2000
-	return datetime(year=t[2], month=t[1], day=t[0], hour=t[3], minute=t[4])
+	assert len(t) in (3,5)
+	if len(t) == 3:
+		return datetime(year=t[2], month=t[1], day=t[0], hour=0, minute=0)
+	else:
+		return datetime(year=t[2], month=t[1], day=t[0], hour=t[3], minute=t[4])
+
+def germandate(t):
+	months = ["", "Januar", "Februar", "März", "April", "Mai", "Juni",
+		"Juli", "August", "September", "Oktober", "November", "Dezember"]
+	s = "%d. %s %4d" % (t.day, months[t.month], t.year)
+	if t.hour: s += " / %02d:%02d" % (t.hour, t.minute)
+	return s
 
 def printnews(ipath):
 	for news in iter(ipath):
-		print("time: |", news["time"].strftime("%Y-%m-%d / %H:%M"))
+		#~ print("time: |", news["time"].strftime("%Y-%m-%d / %H:%M"))
+		print("time: |", germandate(news["time"]))
 		print("text: |", news["text"])
 		if "link" in news:
 			print("link: |", news["link"], end="")
@@ -53,20 +64,24 @@ def printnews(ipath):
 			print()
 		print()
 
-def germandate(t):
-	months = ["", "Januar", "Februar", "März", "April", "Mai", "Juni",
-		"Juli", "August", "September", "Oktober", "November", "Dezember"]
-	return "%d. %s %4d" % (t.day, months[t.month], t.year)
-
 def printhtml(ipath, ofile=sys.stdout, prefix=""):
+	last_date = None
 	for news in iter(ipath):
-		ofile.write(prefix + '<article class="news">\n')
+		cls = "news"
+		#~ if len(news["text"]) < 200:
+			#~ cls += " card"
+		if len(news["lines"]) > 1:
+			text = "\t<p>" + "</p>\n\t<p>".join(news["lines"]) + "</p>\n"
+		else:
+			cls += " card"
+			text = "\t<p>%s</p>\n" % news["text"]
+		ofile.write(prefix + '<article class="%s">\n' % cls)
 		ofile.write(prefix + '\t<time datetime="%s">%s</time>\n' % (
 			news["time"].strftime("%Y-%m-%dT%H:%M:00"),
 			# news["time"].strftime("%Y-%m-%d / %H:%M")
 			germandate(news["time"])
 		))
-		ofile.write(prefix + '\t<p>%s</p>\n' % news["text"])
+		ofile.write(prefix + text)
 		if "link" in news:
 			ofile.write(prefix + '\t<a href="%s">%s</a>\n' % (
 				news["url"] or "",
