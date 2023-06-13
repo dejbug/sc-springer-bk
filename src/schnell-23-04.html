@@ -1,0 +1,19 @@
+{{ cat content/html-header.html }}
+{{ python tools/render.py content/navbar.html active=vereinsturniere }}
+{{ python tools/render.py content/header.html }}
+
+<main>
+
+<h1>Schnellschachturnier April 2023</h1>
+
+<article>
+
+<div class="table-wrapper crosstable">
+{{ python tools/csv2table.py tables/schnell-23-04.csv }}
+</div>
+
+</article>
+</main>
+
+{{ python tools/render.py content/footer.html }}
+{{ cat content/html-footer.html }}

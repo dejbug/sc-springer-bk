@@ -8,11 +8,17 @@ def csv2table(inpath, o=sys.stdout):
 		people, players, crosstable = tables.render(inpath)
 		rr = crosstable
 	except:
-		rr = [r for r in csv.reader(open(inpath))]
+		t = tables.determine_csv_type(inpath)
+		if t and t.startswith("t/"):
+			file = open(inpath, "r", encoding="utf-8")
+			lines = (tables.collapse_tabs(line.strip()) for line in file)
+			reader = csv.reader(lines)
+		else:
+			reader = csv.reader(open(inpath, "r", encoding="utf-8"))
+		rr = [r for r in reader]
 
-	o.write("<!-- v.0.2 -->\n")
 	o.write("<table>\n\t<thead>\n")
-	#~ rr = [r for r in csv.reader(open(inpath))]
+	#~ rr = [r for r in csv.reader(open(inpath, "r", encoding="utf-8"))]
 	o.write("\t\t<tr>\n")
 	for c in rr[0]:
 		o.write("\t\t\t<th>%s</th>\n" % c)
@@ -23,7 +29,9 @@ def csv2table(inpath, o=sys.stdout):
 			# if c == "0.5": c = "&frac12;"
 			# elif c.endswith(".5"): c = c.replace(".5", " &frac12;")
 			c = c.replace("0.5", "&frac12;")
+			c = c.replace("0.25", "&frac14;")
 			c = c.replace(".5", " &frac12;")
+			c = c.replace(".25", " &frac14;")
 			c = c.replace("/", "<br>")
 			a = ' class="identity"' if c == "=" else ""
 			o.write("\t\t\t<td%s>%s</td>\n" % (a, c))

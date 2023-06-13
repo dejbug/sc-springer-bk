@@ -7,7 +7,7 @@ import collections
 
 def parse_args(args=sys.argv[1:]):
 	p = argparse.ArgumentParser()
-	p.add_argument("--type", action="store_true", help="determine file type")
+	p.add_argument("-t", "--type", action="store_true", help="determine file type")
 	p.add_argument("file")
 	aa = p.parse_args(args)
 	return p, aa
@@ -15,6 +15,8 @@ def parse_args(args=sys.argv[1:]):
 def determine_csv_type(file_or_line):
 	"""
 	>>> determine_csv_type("Runde,Weiss,Schwarz,Ergebnis")
+	'RWSE'
+	>>> determine_csv_type("Runde,	Weiss,	Schwarz,	Ergebnis")
 	'RWSE'
 	>>> determine_csv_type("Runde\\tWeiss\\t\\tSchwarz\\tErgebnis")
 	't/RWSE'
@@ -29,19 +31,23 @@ def determine_csv_type(file_or_line):
 	>>> determine_csv_type("xyz")
 	"""
 	if isinstance(file_or_line, str):
-		header = file_or_line.strip()
+		if file_or_line.endswith(".csv"):
+			file_or_line = open(file_or_line, "r", encoding="utf-8")
+			header = file_or_line.readline().strip()
+		else:
+			header = file_or_line.strip()
 	else:
 		header = file_or_line.readline().strip()
 
-	if re.match("#,Name(,\d+)+,Punkte", header):
+	if re.match("\s*#,\s*Name(,\s*\d+)+,\s*Punkte", header):
 		return "#NP"
 	elif re.match("#\t+Name(\t+\d+)+\t+Punkte", header):
 		return "t/#NP"
-	elif re.match("Runde,Weiss,Schwarz,Ergebnis", header):
+	elif re.match("\s*Runde,\s*Weiss,\s*Schwarz,\s*Ergebnis", header):
 		return "RWSE"
 	elif re.match("Runde\t+Weiss\t+Schwarz\t+Ergebnis", header):
 		return "t/RWSE"
-	elif re.match("#,Name,G,S,R,V,Punkte,Buchh,Soberg", header):
+	elif re.match("\s*#,\s*Name,\s*G,\s*S,\s*R,\s*V,\s*Punkte,\s*Buchh,\s*Soberg", header):
 		return "#NGSRVPBS"
 	elif re.match("#\t+Name\t+G\t+S\t+R\t+V\t+Punkte\t+Buchh\t+Soberg", header):
 		return "t/#NGSRVPBS"
@@ -56,55 +62,94 @@ def collapse_tabs(text):
 	return re.sub(r"\t+", ",", text)
 
 class Score:
-	SCORE_FLAG_ASTERISK = 1
-
-	def __init__(self, score, flags, strict=None):
+	def __init__(self, score, mark=None):
 		self.score = score
-		self.flags = flags
-		self.strict = strict
+		self.other = None
+		self.mark = mark
 
 	def __repr__(self):
 		return self.__class__.__name__ + str(self.__dict__)
+
+	@staticmethod
+	def reduce(x):
+		ireduce = lambda i: i if i - int(i) else int(i)
+		if isinstance(x, str):
+			return ireduce(float(x))
+		elif isinstance(x, float):
+			return ireduce(x)
+		elif isinstance(x, int):
+			return x
+		raise TypeError
 
 	@classmethod
 	def parse(cls, score, strict=True):
 		"""
 		>>> Score.parse("1")
-		Score{'score': 1, 'flags': 0, 'strict': True}
+		Score{'score': 1, 'other': None, 'mark': None}
 		>>> Score.parse("1:0")
-		Score{'score': 1, 'flags': 0, 'strict': True}
+		Score{'score': 1, 'other': None, 'mark': None}
 		>>> Score.parse("0")
-		Score{'score': 0, 'flags': 0, 'strict': True}
+		Score{'score': 0, 'other': None, 'mark': None}
 		>>> Score.parse("0:1")
-		Score{'score': 0, 'flags': 0, 'strict': True}
+		Score{'score': 0, 'other': None, 'mark': None}
 		>>> Score.parse("0.5")
-		Score{'score': 0.5, 'flags': 0, 'strict': True}
+		Score{'score': 0.5, 'other': None, 'mark': None}
 		>>> Score.parse("0.5:0.5")
-		Score{'score': 0.5, 'flags': 0, 'strict': True}
+		Score{'score': 0.5, 'other': None, 'mark': None}
 		>>> Score.parse("0.5*")
-		Score{'score': 0.5, 'flags': 1, 'strict': True}
+		Score{'score': 0.5, 'other': None, 'mark': True}
 		>>> Score.parse(".5*")
-		Score{'score': 0.5, 'flags': 1, 'strict': True}
+		Score{'score': 0.5, 'other': None, 'mark': True}
+		>>> Score.parse("1w")
+		Score{'score': 1, 'other': None, 'mark': False}
+		>>> Score.parse("1b")
+		Score{'score': 1, 'other': None, 'mark': True}
+		>>> Score.parse("1s")
+		Score{'score': 1, 'other': None, 'mark': True}
+		>>> Score.parse("0/0")
+		Score{'score': 0, 'other': Score{'score': 0, 'other': None, 'mark': None}, 'mark': None}
+		>>> Score.parse("0/1")
+		Score{'score': 0, 'other': Score{'score': 1, 'other': None, 'mark': None}, 'mark': None}
+		>>> Score.parse("1*/0")
+		Score{'score': 1, 'other': Score{'score': 0, 'other': None, 'mark': None}, 'mark': True}
+		>>> Score.parse("1/1*")
+		Score{'score': 1, 'other': Score{'score': 1, 'other': None, 'mark': True}, 'mark': None}
 		>>> Score.parse("2")
 		>>> Score.parse("0:0")
 		Traceback (most recent call last):
-		ValueError: invalid score "0:0"
+		ValueError: invalid score "0:0": mismatch
 		"""
-		m = re.match(r"(0?\.5|0|1)(?:[-:](0?\.5|0|1))?(.*)?", score)
+		m = re.match(r"\s*(0?\.5|0|1)([*wbsWBS]?)(?:([-:/])(0?\.5|0|1)([*wbsWBS]?)(.*))?", score)
 		if not m: return None
-		w, b, f = m.groups()
-		w = int(w) if len(w) == 1 else .5
-		if strict and b:
-			b = int(b) if len(b) == 1 else .5
-			if b != 1 - w:
-				raise ValueError("invalid score \"%s\"" % score)
+		#~ print(m.groups())
 
-		flags = 0
-		if f:
-			if "*" in f: flags |= cls.SCORE_FLAG_ASTERISK
+		a, aflags, sep, b, bflags, rest = m.groups()
+
+		s = cls(cls.reduce(a))
+		if aflags:
+			if aflags in "*bsBS":
+				s.mark = True
+			elif aflags in "wW":
+				s.mark = False
 			elif strict:
-				raise ValueError("invalid flags \"%s\"" % f)
-		return cls(w, flags, strict)
+				raise ValueError("invalid aflags \"%s\"" % aflags)
+
+		if b:
+			b = cls(cls.reduce(b))
+			if sep == "/":
+				s.other = b
+				if bflags:
+					if bflags in "*bsBS":
+						b.mark = True
+					elif bflgs in "wW":
+						b.mark = False
+					elif strict:
+						raise ValueError("invalid bflags \"%s\"" % bflags)
+			elif sep == ":":
+				if strict and b.score != 1 - s.score:
+					raise ValueError("invalid score \"%s\": mismatch" % score)
+
+		return s
 
 class People:
 	def __init__(self):
@@ -115,6 +160,7 @@ class People:
 		return len(self.name2id)
 
 	def add(self, name):
+		name = name.strip()
 		if name in self.name2id:
 			return self.name2id[name]
 		id = len(self.name2id) + 1
@@ -140,7 +186,7 @@ class People:
 		return s.getvalue()
 
 class Game:
-	def __init__(self, pid, oid, score, white, rid=0):
+	def __init__(self, pid, oid, score, white=None, rid=0):
 		self.pid = pid
 		self.oid = oid
 		self.score = score
@@ -186,14 +232,19 @@ class Player:
 		self.name = people.name(self.id)
 
 	def add_game(self, game):
-		self.games[game.oid] = game
+		if game.oid not in self.games:
+			self.games[game.oid] = [game]
+		else:
+			self.games[game.oid].append(game)
 		self.total += game.score
 
 	def has_played(self, oid):
-		for g in self.games.values():
-			if g.oid == oid:
-				return True
-		return False
+		count = 0
+		for gg in self.games.values():
+			for g in gg:
+				if g.oid == oid:
+					count += 1
+		return count
 
 	def __str__(self):
 		#~ return "Player%s" % { k: self.__dict__[k] for k in ["id", "total", "rank"] }
@@ -203,8 +254,8 @@ class Player:
 		if self.name:
 			s.write(" \"%s\"" % self.name)
 		s.write("\n")
-		for g in self.games.values():
-			s.write("    R%s\n" % g)
+		for gg in self.games.values():
+			s.write("    R%s\n" % gg)
 		return s.getvalue()
 
 def list_index_of(list, element):
@@ -222,8 +273,6 @@ class Players:
 		return len(self.players)
 
 	def __iter__(self):
-		#~ for p in self.players.values():
-			#~ yield p
 		for id in self.order:
 			yield self.players[id]
 
@@ -247,13 +296,6 @@ class Players:
 		b = match.black()
 		self.get(w.pid).add_game(w)
 		self.get(b.pid).add_game(b)
-
-	def has_match(self, match):
-		w = self.get(match.wid)
-		b = self.get(match.bid)
-		if not w.has_played(match.bid): return False
-		if not b.has_played(match.wid): return False
-		return True
 
 	def sort_by_name(self, people=None, reverse=False):
 		# (Usually) Assumes self.resolve()  was called.
@@ -350,17 +392,23 @@ class Table:
 			s.write("\n")
 		return s.getvalue()
 
+def iter_table_indices(rowcount, colcount, rowoffset=0, coloffset=0):
+	for row in range(rowcount - rowoffset):
+		for col in range(colcount - coloffset):
+			if col <= row: continue
+			yield row + 1, col + 1, row + rowoffset, col + coloffset
+
 def parse(path):
 	with open(path, "r", encoding="utf-8") as file:
 		t = determine_csv_type(file)
-		if t.startswith("t/"):
-			reader = csv.reader(map(collapse_tabs, file))
+		if not t:
+			raise Exception("unknown CSV type")
+		elif t.startswith("t/"):
+			reader = csv.reader(collapse_tabs(line.strip()) for line in file)
 			rows = [line for line in reader]
 		else:
-			reader = csv.reader(file)
+			reader = csv.reader(line.strip() for line in file)
 			rows = [line for line in reader]
-		#~ else:
-			#~ raise Exception("unknown CSV type: %s" % t)
 
 	people = People()
 	players = Players()
@@ -373,14 +421,18 @@ def parse(path):
 			players.add_match(Match(w, b, s.score, int(r)))
 	elif t.endswith("#NP"):
 		for row in rows:
-			i = people.add(row[1])
-		for i, row in enumerate(rows):
-			for j, c in enumerate(row[2:-1]):
-				if i == j: continue
-				s = Score.parse(c)
-				m = Match(i + 1, j + 1, s.score)
-				if not players.has_match(m):
-					players.add_match(m)
+			people.add(row[1])
+		for rid, cid, i, j in iter_table_indices(len(rows), len(rows[0])-1, 0, 2):
+			c = rows[i][j].strip()
+			#~ print(rid, cid, "%d:%d" % (i, j), c)
+			s = Score.parse(c)
+			m = Match(rid, cid, s.score)
+			players.add_match(m)
+			if s.other:
+				m = Match(rid, cid, s.other.score)
+				players.add_match(m)
+	elif t.endswith("#NGSRVPBS"):
+		raise Exception("no crosstable possible")
 
 	return people, players
 
@@ -403,16 +455,20 @@ def empty_crosstable(pc):
 
 	return table
 
-def crosstable(players, show_white=None):
+def crosstable(players, show_black=None):
 	table = empty_crosstable(len(players))
 
 	for p in players:
 		pid = p.rank # p.id of table
-		table[pid][-1] = str(p.total)
-		for g in p.games.values():
-			oid = players.get(g.oid).rank # g.oid of table
-			table[pid][oid] = str(g.score)
-			if show_white == g.white: table[pid][oid] += "*"
+		table[pid][-1] = str(Score.reduce(p.total))
+		for gg in p.games.values():
+			for g in gg:
+				oid = players.get(g.oid).rank # g.oid of table
+				if not table[pid][oid] or table[pid][oid] == "-":
+					table[pid][oid] = str(g.score)
+				else:
+					table[pid][oid] += "/" + str(g.score)
+				if show_black and not g.white: table[pid][oid] += "*"
 
 	if players.needs_place_column():
 		table[0].append("Platz")
@@ -434,6 +490,14 @@ def render(inpath):
 
 if __name__ == "__main__":
 	p, aa = parse_args()
+	#~ Namespace = collections.namedtuple("Namespace", "file type")
+	#~ aa = Namespace("tables/blitz-22-08.csv", None)
+	#~ aa = Namespace("tables/blitz-23-01.csv", None)
+	#~ aa = Namespace("tables/schnell-23-04.csv", None)
+	#~ aa = Namespace("tables/schnell-23-02.csv", True)
+	#~ aa = Namespace("tables/schnell-23-06-games.csv", None)
+	#~ aa = Namespace("tables/gp-22-08-12-cumulative.csv", True)
+
 	#~ print(aa)
 	if aa.type:
 		with open(aa.file, "r", encoding="utf-8") as file:
