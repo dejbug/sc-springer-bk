@@ -1,0 +1,106 @@
+import re, hashlib
+from collections import namedtuple
+
+from . import abs
+
+FileId = namedtuple("FileId", "file id")
+FileId.__repr__ = FileId.__str__ = lambda self: 'FileId(%d => "%s")' % (self.id, self.file.path)
+
+# TODO: Add a Names class which automatically resolves added names (i.e.
+#		turn a names list into a names set).
+
+@abs.stringify
+class Name:
+	def __init__(self, text, fid):
+		self.text = text
+		self.fid = fid
+		self.sid = None
+
+	@classmethod
+	def load(cls, file):
+		header = file.header.split()
+		assert header[0].strip().strip(",") in ("#", "Nr", "Nr.", "Platz")
+		assert header[1].strip().strip(",") in ("Name", "Spieler")
+
+		for row in file.rows:
+			i = int(row[0])
+			n = row[1]
+			yield Name(n, FileId(file, i))
+
+class Synonyms:
+	def __init__(self, synonyms):
+		self.synonyms = synonyms
+		self.unresolved = []
+		for synonym in self.synonyms:
+			for i, name in enumerate(synonym):
+				synonym[i] = HashedName(synonym[i])
+
+	def classify(self, name):
+		assert isinstance(name, (Name, str))
+		name1 = HashedName(name.text if isinstance(name, Name) else name)
+		for i, synonym in enumerate(self.synonyms):
+			for name2 in synonym:
+				if name1 == name2:
+					return i
+		for i, name3 in enumerate(self.unresolved):
+			if name1 == name3:
+				return -(i+1)
+		self.unresolved.append(name1)
+		return -len(self.unresolved)
+
+	def classify_all(self, names):
+		for name in names:
+			name.sid = self.classify(name)
+
+	@classmethod
+	def classified(cls, names):
+		return filter(lambda name: name.sid is not None, names)
+
+	@classmethod
+	def unclassified(cls, names):
+		return filter(lambda name: name.sid is None, names)
+
+	@classmethod
+	def groups(cls, names):
+		groups = {}
+		for name in names:
+			if name.sid in groups:
+				groups[name.sid].append(name)
+			else:
+				groups[name.sid] = [name]
+		return groups
+
+class HashedName:
+	def __init__(self, name):
+		self.name = self.normalize_name(name)
+		self.hash = self.hash_name(self.name)
+
+	def __eq__(self, other):
+		if self.hash != other.hash: return False
+		if self.name != other.name: return False
+		return True
+
+	@staticmethod
+	def normalize_name(name):
+		return re.sub(r"\s+", " ", name.strip()).lower()
+
+	@staticmethod
+	def hash_name(name):
+		return hashlib.sha256(name.encode("utf8")).digest()
+
+# TODO: Move synonyms into an external textfile.
+DEFAULT_SYNONYMS = [
+	["Anton", "Daniel Anton"],
+	["Brunner", "Ben Brunner", "Benedikt Brunner"],
+	["Budimir", "Dejan Budimir"],
+	["Hentzner", "Bernd Hentzner"],
+	["Heusel", "Bernd Heusel"],
+	["Messer", "Reiner Messer"],
+	["Pfeiffer", "Willi Pfeiffer"],
+	["Sauer", "Bruno Sauer"],
+	["Reinhold", "Manuel Reinhold"],
+	["Schmidt", "Rudolf Schmidt"],
+	["Schupp", "Reinhold Schupp"],
+	["Talin", "Talin ?"],
+	["Wenzel", "Donald Wenzel"],
+]
