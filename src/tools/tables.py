@@ -41,15 +41,27 @@ def determine_csv_type(file_or_line):
 	else:
 		header = file_or_line.readline().strip()
 
-	if re.match("\s*#,\s*Name(,\s*\d+)+,\s*Punkte", header):
+	if re.match("^#,\s*Name(,\s*\d+)+,\s*Punkte$", header):
 		return "#NP"
-	elif re.match("#\t+Name(\t+\d+)+\t+Punkte", header):
+	elif re.match("^#\t+Name(\t+\d+)+\t+Punkte$", header):
 		return "t/#NP"
-	elif re.match("\s*Runde,\s*Weiss,\s*Schwarz,\s*Ergebnis", header):
+	elif re.match("^#,\s*Name(,\s*\d+)+,\s*Punkte,\s*Platz$", header):
+		return "#NPP"
+	elif re.match("^#\t+Name(\t+\d+)+\t+Punkte\t+Platz$", header):
+		return "t/#NPP"
+	elif re.match("^#,\s*Name(,\s*\d+)+$", header):
+		return "#N"
+	elif re.match("^#\t+Name(\t+\d+)+$", header):
+		return "t/#N"
+	elif re.match("^#,\s*x\s*=\s*(,\s*\d+)+$", header):
+		return "#X"
+	elif re.match("^#\t+x\s*=\s*(\t+\d+)+$", header):
+		return "t/#X"
+	elif re.match("^Runde,\s*Weiss,\s*Schwarz,\s*Ergebnis$", header):
 		return "RWSE"
-	elif re.match("Runde\t+Weiss\t+Schwarz\t+Ergebnis", header):
+	elif re.match("^Runde\t+Weiss\t+Schwarz\t+Ergebnis$", header):
 		return "t/RWSE"
-	elif re.match("\s*#,\s*Name,\s*G,\s*S,\s*R,\s*V,\s*Punkte,\s*Buchh,\s*Soberg", header):
+	elif re.match("^#,\s*Name,\s*G,\s*S,\s*R,\s*V,\s*Punkte,\s*Buchh,\s*Soberg$", header):
 		return "#NGSRVPBS"
 	elif re.match("#\t+Name\t+G\t+S\t+R\t+V\t+Punkte\t+Buchh\t+Soberg", header):
 		return "t/#NGSRVPBS"
@@ -379,10 +391,15 @@ def parse(path):
 			b = people.add(b)
 			s = Score.parse(s)
 			players.add_match(Match(w, b, s.score, int(r)))
-	elif t.endswith("#NP"):
+	elif t.endswith("#NP") or t.endswith("#N") or t.endswith("#X"):
+		endcols = 0
+		if t.endswith("PP"): endcols = 2
+		elif t.endswith("P"): endcols = 1
+
 		for row in rows:
 			people.add(row[1])
-		for rid, cid, i, j in iter_table_indices(len(rows), len(rows[0])-1, 0, 2):
+		indices = iter_table_indices(len(rows), len(rows[0])-endcols, 0, 2)
+		for rid, cid, i, j in indices:
 			c = rows[i][j].strip()
 			#~ print(rid, cid, "%d:%d" % (i, j), c)
 			s = Score.parse(c)

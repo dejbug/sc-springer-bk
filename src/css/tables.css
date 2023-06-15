@@ -1,6 +1,6 @@
 table {
 	border-collapse: collapse;
-	// font-size: min(3rem, calc(100svw / 16 / 2.3));
+	/* font-size: min(3rem, calc(100svw / 16 / 2.3)); */
 	font-size: 2rem;
 	font-family: sans;
 	white-space: nowrap;
@@ -28,20 +28,41 @@ th, td {
 	font-family: serif;
 }
 
+/*
 .crosstable td:not(:nth-child(2)) {
+	text-align: center;
+}
+*/
+
+.crosstable td:nth-child(1) {
 	text-align: center;
 }
 
 .crosstable td.identity {
+	text-align: center;
 	color: lightgrey;
 }
 
+.crosstable td.missing {
+	text-align: center;
+	color: white;
+}
+
+.crosstable td.score {
+	text-align: center;
+}
+
 .crosstable td:last-child {
-	text-align: left;
+	/* text-align: left; */
 	padding-left: 1.5em;
 }
 
 .crosstable.nolast td:last-child {
 	text-align: center;
-	padding-left: 0;
+	padding: .3em;
+}
+
+.crosstable td .padding {
+	/* visibility: hidden; */
+	color: lightgrey;
 }

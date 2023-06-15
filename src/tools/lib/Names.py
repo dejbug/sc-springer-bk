@@ -35,6 +35,16 @@ class Synonyms:
 			for i, name in enumerate(synonym):
 				synonym[i] = HashedName(synonym[i])
 
+	def text(self, sid, index = 0):
+		if sid >= 0:
+			if sid < len(self.synonyms):
+				if index >= 0 and index < len(self.synonyms[sid]):
+					return self.synonyms[sid][index].text
+		else:
+			sid = -sid-1
+			if sid < len(self.unresolved):
+				return self.unresolved[sid].text
+
 	def classify(self, name):
 		assert isinstance(name, (Name, str))
 		name1 = HashedName(name.text if isinstance(name, Name) else name)
@@ -71,8 +81,9 @@ class Synonyms:
 		return groups
 
 class HashedName:
-	def __init__(self, name):
-		self.name = self.normalize_name(name)
+	def __init__(self, text):
+		self.text = text
+		self.name = self.normalize_name(self.text)
 		self.hash = self.hash_name(self.name)
 
 	def __eq__(self, other):

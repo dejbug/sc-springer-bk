@@ -20,7 +20,7 @@ dist/index.php : tools/index.php ; $(call FCOPY,$<,dist)
 
 dist/default.css : css/* dist/vendor/github.svg
 
-$(HTML) : content/*.html
+$(HTML) : content/*.html dist/default.css
 
 dist/vereinsturniere.html : dist/pokal-22.html
 
