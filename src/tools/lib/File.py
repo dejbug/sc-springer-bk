@@ -71,19 +71,27 @@ class File:
 		>>> File.htype("xyz")
 		"""
 		text = text.strip()
-		if re.match("#,\s*Name(,\s*\d+)+,\s*Punkte", text):
+		if re.match("^#,\s*Name(,\s*\d+)+,\s*Punkte$", text):
 			return "#NP"
-		elif re.match("#\t+Name(\t+\d+)+\t+Punkte", text):
+		elif re.match("^#\t+Name(\t+\d+)+\t+Punkte$", text):
 			return "t/#NP"
-		elif re.match("#,\s*Name(,\s*\d+)+", text):
+		elif re.match("^#,\s*Name(,\s*\d+)+$", text):
 			return "#NP"
-		elif re.match("#\t+Name(\t+\d+)+", text):
+		elif re.match("^#\t+Name(\t+\d+)+$", text):
 			return "t/#NP"
-		elif re.match("Runde,\s*Weiss,\s*Schwarz,\s*Ergebnis", text):
+		elif re.match("^#,\s*x\s*=\s*(,\s*\d+)+$", text):
+			return "#X"
+		elif re.match("^#\t+x\s*=\s*(\t+\d+)+$", text):
+			return "t/#X"
+		elif re.match("^Runde,\s*Weiss,\s*Schwarz,\s*Ergebnis$", text):
 			return "RWSE"
-		elif re.match("Runde\t+Weiss\t+Schwarz\t+Ergebnis", text):
+		elif re.match("^Runde\t+Weiss\t+Schwarz\t+Ergebnis$", text):
 			return "t/RWSE"
-		elif re.match("#,\s*Name,\s*G,\s*S,\s*R,\s*V,\s*Punkte,\s*Buchh,\s*Soberg", text):
+		elif re.match("^#,\s*Name,\s*G,\s*S,\s*R,\s*V,\s*Punkte,\s*Buchh,\s*Soberg$", text):
 			return "#NGSRVPBS"
-		elif re.match("#\t+Name\t+G\t+S\t+R\t+V\t+Punkte\t+Buchh\t+Soberg", text):
+		elif re.match("^#\t+Name\t+G\t+S\t+R\t+V\t+Punkte\t+Buchh\t+Soberg$", text):
 			return "t/#NGSRVPBS"
+		elif re.match("^#,\s*Name,\s*Punkte(,\s*R\d+)+$", text):
+			return "#NPR"
+		elif re.match("^#\t+Name\t+Punkte(\t+R\d+)+$", text):
+			return "t/#NPR"

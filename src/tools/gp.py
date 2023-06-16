@@ -31,6 +31,19 @@ def score(name):
 	# FIXME: The scores for GP are not the tournament scores but
 	#	are based on the rank. Solo first gets 10, shared first
 	#	get 9 each. Second gets 8, third gets 7, etc.
+	topscore = name.fid.file.rows[0][cid]
+	score = name.fid.file.rows[rid][cid]
+	if rid != 0 and score == topscore: return 9.0
+	elif rid == 0: return 10.0
+	elif rid == 1: return 8.0
+	elif rid == 2: return 7.0
+	elif rid == 3: return 6.0
+	elif rid == 4: return 5.0
+	elif rid == 5: return 4.0
+	elif rid == 6: return 3.0
+	elif rid == 7: return 2.0
+	elif rid == 8: return 1.0
+	else: return 0.0
 
 	return float(cols[cid])
 
@@ -122,6 +135,7 @@ def extend_sums(history, min_length = 3):
 
 
 def print_full_history(history):
+	history = sort_by_tournament_results(history)
 	sizes = get_column_sizes(history)
 
 	sfcol = " %%%d.%df " % (
@@ -307,10 +321,10 @@ if __name__ == "__main__":
 	#~ print_names(names, synonyms)
 	#~ print_groups(names, synonyms)
 	#~ print_history(history, 3)
-	print_full_history(history)
+	#~ print_full_history(history)
 
 	#~ print_best_tournament_results(history)
 	#~ print_best_tournament_results_html(history)
 
 	#~ print_best_tournament_results_csv(history)
-	#~ print_cumulative_tournament_results_csv(history)
+	print_cumulative_tournament_results_csv(history)
