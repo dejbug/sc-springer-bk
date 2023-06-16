@@ -1,14 +1,14 @@
  #,     Name,    1,    2,    3,    4,    5
- 1,  Brunner, 10  , 10  ,  9  ,  8  ,     
- 2,  Budimir, 10  ,  7  ,  6  ,     ,     
- 3,   Heusel, 10  ,  7  ,  5  ,     ,     
- 4,   Messer, 10  ,  6  ,  6  ,  5  ,  4  
- 5,    Sauer,  9  ,  8  ,  7  ,  7  ,     
- 6,    Anton,  8  ,     ,     ,     ,     
- 7,    Talin,  8  ,     ,     ,     ,     
- 8,   Schupp,  7  ,  5  ,  4  ,  4  ,  3  
- 9, Pfeiffer,  6  ,  6  ,  5  ,     ,     
-10,   Wenzel,  4  ,     ,     ,     ,     
-11,  Schmidt,  3  ,  3  ,     ,     ,     
-12, Hentzner,  2  ,     ,     ,     ,     
-13, Reinhold,  2  ,     ,     ,     ,     
+ 1,  Brunner, 10  ,  9  ,  9  ,  8  ,     
+ 2,  Budimir, 10  ,  8  ,  7  ,     ,     
+ 3,   Heusel, 10  ,  7  ,  7  ,     ,     
+ 4,   Messer,  9  ,  7  ,  7  ,  6  ,  5  
+ 5,    Talin,  9  ,     ,     ,     ,     
+ 6,    Sauer,  8  ,  8  ,  7  ,  7  ,     
+ 7,   Schupp,  8  ,  6  ,  6  ,  5  ,  4  
+ 8, Pfeiffer,  8  ,  6  ,  6  ,     ,     
+ 9,    Anton,  8  ,     ,     ,     ,     
+10,   Wenzel,  7  ,     ,     ,     ,     
+11,  Schmidt,  6  ,  5  ,     ,     ,     
+12, Hentzner,  5  ,     ,     ,     ,     
+13, Reinhold,  4  ,     ,     ,     ,     

@@ -20,32 +20,52 @@ def load_names_from_files(filepaths):
 	return names, synonyms
 
 
-def score(name):
-	t = name.fid.file.type
-	rid = name.fid.id - 1	# header is not included in the rows
-	cols = name.fid.file.rows[rid]
+def scores_from_file(file):
+	t = file.type
 	if t.endswith("#NP"): cid = -1
 	elif t.endswith("#NGSRVPBS"): cid = -3
 	else: raise Exception("score column not found: unknown table")
+	return [float(row[cid]) for row in file.rows]
 
-	# FIXME: The scores for GP are not the tournament scores but
-	#	are based on the rank. Solo first gets 10, shared first
-	#	get 9 each. Second gets 8, third gets 7, etc.
-	topscore = name.fid.file.rows[0][cid]
-	score = name.fid.file.rows[rid][cid]
-	if rid != 0 and score == topscore: return 9.0
-	elif rid == 0: return 10.0
-	elif rid == 1: return 8.0
-	elif rid == 2: return 7.0
-	elif rid == 3: return 6.0
-	elif rid == 4: return 5.0
-	elif rid == 5: return 4.0
-	elif rid == 6: return 3.0
-	elif rid == 7: return 2.0
-	elif rid == 8: return 1.0
-	else: return 0.0
 
-	return float(cols[cid])
+def ranks_from_file(file, contiguous=False):
+	scores = scores_from_file(file)
+	scores = sorted(scores, reverse=True)
+	ranks = []
+	last = None
+	rank = 0
+	for index, score in enumerate(scores, start=1):
+		if score != last:
+			last = score
+			rank = rank + 1 if contiguous else index
+		ranks.append(rank)
+	#~ print(file.path, list(zip(scores, ranks)))
+	return ranks
+
+
+def gp_scores_from_file(file):
+	ranks = ranks_from_file(file, contiguous=True)
+	if len(ranks) == 0: return None
+	if len(ranks) == 1: return 10.0
+	j = ranks.index(2)
+	v = 10.0 if j == 1 else 9.0
+	for i in range(j):
+		ranks[i] = v
+	for i in range(j, len(ranks)):
+		ranks[i] = max(0.0, 10.0 - ranks[i])
+	return ranks
+
+
+def gp_score(name):
+	gps = gp_scores_from_file(name.fid.file)
+	rid = name.fid.id - 1	# header is not included in the rows
+	return gps[rid]
+
+
+def score(name):
+	rid = name.fid.id - 1	# header is not included in the rows
+	scores = scores_from_file(name.fid.file)
+	return scores[rid]
 
 
 def load_history(names, synonyms):
@@ -54,7 +74,7 @@ def load_history(names, synonyms):
 	for sid, names in groups.items():
 		scores = []
 		for name in names:
-			scores.append(score(name))
+			scores.append(gp_score(name))
 		scores = sorted(scores, reverse=True)
 		history.append([synonyms.text(sid), scores])
 	extend_scores(history)
