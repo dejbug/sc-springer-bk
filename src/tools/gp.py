@@ -4,6 +4,10 @@ import math
 from lib.File import File
 from lib.Names import Name, Synonyms, DEFAULT_SYNONYMS
 
+from lib.History import History
+
+from lib import tool
+
 
 def load_names_from_files(filepaths):
 	names = []
@@ -62,7 +66,7 @@ def gp_score(name):
 	return gps[rid]
 
 
-def score(name):
+def points_score(name):
 	rid = name.fid.id - 1	# header is not included in the rows
 	scores = scores_from_file(name.fid.file)
 	return scores[rid]
@@ -72,8 +76,10 @@ def load_history(names, synonyms):
 	history = []
 	groups = synonyms.groups(names)
 	for sid, names in groups.items():
+		#~ points = []
 		scores = []
 		for name in names:
+			#~ points.append(points_score(name))
 			scores.append(gp_score(name))
 		scores = sorted(scores, reverse=True)
 		history.append([synonyms.text(sid), scores])
@@ -331,12 +337,64 @@ def print_cumulative_tournament_results_csv(history, file=sys.stdout):
 		file.write("\n")
 
 
+def print_best_tournament_results_html(history, file=sys.stdout):
+	history = sort_by_tournament_results(history)
+
+	sizes = get_column_sizes(history)
+	#~ print(sizes)
+
+	file.write("#,Name")
+
+	for i in range(1, sizes["max_scores_count"] + 1):
+		file.write(",%d" % i)
+	file.write("\n")
+
+	place = 0
+	for name, scores, totals in history:
+		place += 1
+		file.write("%d,%s" % (place, name))
+		for score in scores:
+			if not score:
+				file.write(",")
+			else:
+				file.write("," + tool.ftos(score))
+		file.write("\n")
+
+
+def print_cumulative_tournament_results_html(history, file=sys.stdout):
+	history = sort_by_cumulative_results(history)
+
+	sizes = get_column_sizes(history)
+	#~ print(sizes)
+
+	file.write("#,x = ")
+
+	for i in range(3, sizes["max_scores_count"] + 1):
+		file.write(",%d" % i)
+	file.write("\n")
+
+	place = 0
+	for name, scores, totals in history:
+		place += 1
+		file.write("%d,%s" % (place, name))
+		last_score = None
+		for score in totals:
+			if score == last_score:
+				file.write(",")
+			else:
+				last_score = score
+				file.write("," + tool.ftos(score))
+		file.write("\n")
+
+
 if __name__ == "__main__":
 	filepaths = sys.argv[1:]
 	if not filepaths: exit()
 
 	names, synonyms = load_names_from_files(filepaths)
 	history = load_history(names, synonyms)
+
+	his = History(names, synonyms)
 
 	#~ print_names(names, synonyms)
 	#~ print_groups(names, synonyms)
@@ -347,4 +405,7 @@ if __name__ == "__main__":
 	#~ print_best_tournament_results_html(history)
 
 	#~ print_best_tournament_results_csv(history)
-	print_cumulative_tournament_results_csv(history)
+	#~ print_cumulative_tournament_results_csv(history)
+
+	print_best_tournament_results_html(history)
+	print_cumulative_tournament_results_html(history)

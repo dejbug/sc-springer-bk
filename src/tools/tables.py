@@ -65,6 +65,10 @@ def determine_csv_type(file_or_line):
 		return "#NGSRVPBS"
 	elif re.match("#\t+Name\t+G\t+S\t+R\t+V\t+Punkte\t+Buchh\t+Soberg", header):
 		return "t/#NGSRVPBS"
+	elif re.match("^#,\s*Name,\s*Punkte(,\s*R\d+)+$", header):
+		return "#NPR"
+	elif re.match("^#\t+Name\t+Punkte(\t+R\d+)+$", header):
+		return "t/#NPR"
 
 def collapse_tabs(text):
 	"""
