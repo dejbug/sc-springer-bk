@@ -24,9 +24,9 @@ dist/% : % | dist ; $(call FCOPY,$<,$<)
 dist/%/ : % | dist ; $(call DCOPY,$<,$<)
 
 dist : ; $(MKDIR) dist/
+build : ; $(MKDIR) build/
 
-
-clean : ; $(RMDIR) dist/
+clean : ; $(RMDIR) dist/ build/
 
 serve : all ; cd dist && rm -f index.php && $(SERVE)
 run : all dist/index.php ; cd dist && $(SERVE)
