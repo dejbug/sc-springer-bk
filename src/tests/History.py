@@ -30,3 +30,11 @@ for player in history.players:
 	print(player.name)
 	for score in player.scores:
 		print("%4s | %4s | %4s   %s" % (ftos(score.pscore), ftos(score.rscore), ftos(score.rank), score.fid.file.path))
+
+
+print('\n')
+for player in history.players:
+	if player.name == "Messer":
+		print(player.name)
+		for score in player.scores:
+			print("%4s | %4s | %4s   %s" % (ftos(score.pscore), ftos(score.rscore), ftos(score.rank), score.fid.file.path))

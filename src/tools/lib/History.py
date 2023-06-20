@@ -22,24 +22,25 @@ class History:
 			for x in range(min_length, len(self.scores) + 1):
 				yield sum(s.rscore for s in self.scores[:x])
 
-		def sort_by_pscore(self, reverse=None):
+		def sort_by_pscore(self, reverse = None):
 			if reverse is None: reverse = True
 			self.scores = sorted(self.scores,
 				key=lambda score: score.pscore, reverse=reverse)
 
-		def sort_by_rscore(self, reverse=None):
+		def sort_by_rscore(self, reverse = None):
 			if reverse is None: reverse = True
 			self.scores = sorted(self.scores,
 				key=lambda score: score.rscore, reverse=reverse)
 
-		def sort_by_rank(self, reverse=None):
+		def sort_by_rank(self, reverse = None):
 			if reverse is None: reverse = False
 			self.scores = sorted(self.scores,
 				key=lambda score: score.rank, reverse=not reverse)
 
 
-	def __init__(self, names, synonyms):
+	def __init__(self, names, synonyms, contiguous = False):
 		self.players = []
+		self.contiguous = contiguous
 		self.load(names, synonyms)
 
 	def load(self, names, synonyms):
@@ -55,8 +56,11 @@ class History:
 				rid = name.fid.id - 1
 
 				pscore = file.pscore(rid)
-				rscore = file.rscore(rid)
-				rank = file.rank(rid)
+				rscore = file.rscore(rid, contiguous = self.contiguous)
+				rank = file.rank(rid, contiguous = self.contiguous)
+
+				if player.name == "Messer":
+					print(player.name, file.path, "| RID", rid, "| PSCORE", pscore, "| RANK", rank, "| RSCORE", rscore)
 
 				score = self.Score(name.fid, pscore, rscore, rank)
 				player.scores.append(score)

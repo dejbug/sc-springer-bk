@@ -18,13 +18,15 @@ class Name:
 
 	@classmethod
 	def load(cls, file):
-		header = file.header.split()
-		assert header[0].strip().strip(",") in ("#", "Nr", "Nr.", "Platz")
-		assert header[1].strip().strip(",") in ("Name", "Spieler")
+		#~ header = re.split(r',\s*|\s+', file.header)
+		#~ print(file.type)
+		#~ assert header[0].strip() in ("#", "Nr", "Nr.", "Platz")
+		#~ assert header[1].strip() in ("Name", "Spieler")
 
-		for row in file.rows:
-			i = int(row[0])
-			n = row[1]
+		#~ for row in file.rows:
+		for i, n in file.players():
+			#~ i = int(row[0])
+			#~ n = row[1]
 			yield Name(n, FileId(file, i))
 
 class Synonyms:

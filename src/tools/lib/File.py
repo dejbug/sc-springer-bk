@@ -104,46 +104,71 @@ class File:
 		# TODO: Add more types!
 		t = self.type
 		if t.endswith("#NP"): return -1
+		if t.endswith("#NPR"): return 2
 		if t.endswith("#NGSRVPBS"): return -3
 		raise Exception("score column not found: unknown table")
 
-	def ranks(self, contiguous=False):
-		pscores = self.pscores()
-		pscores = sorted(pscores, reverse=True)
-		ranks = []
+	def ranks(self, contiguous = False):
+		#~ pscores = self.pscores()
+		#~ pscores = sorted(pscores, reverse = True)
+		#~ lut = range(len(pscores))
+		#~ lut = sorted(lut, reverse = True, key = lambda i: pscores[i])
+		#~ print(lut)
+
+		ranks = ((i, s) for i, s in enumerate(self.pscores()))
+		ranks = sorted(ranks, reverse = True, key = lambda x: x[1])
+		#~ print(ranks)
+
 		last = None
 		rank = 0
-		for index, score in enumerate(pscores, start=1):
+		#~ for index, score in enumerate(pscores, start=1):
+		index = 0
+		for i, score in ranks:
+			index += 1
 			if score != last:
 				last = score
 				rank = rank + 1 if contiguous else index
-			ranks.append(rank)
-		#~ print(self.path, list(zip(pscores, ranks)))
+				ranks[i] = (i, rank)
+			#~ ranks.append(rank)
+		#~ print(self.path, ranks)
 		return ranks
 
 	def pscores(self):
 		i = self.points_column_index()
 		return [float(row[i]) for row in self.rows]
 
-	def rscores(self):
-		ranks = self.ranks(contiguous=True)
+	def rscores(self, contiguous = False):
+		ranks = self.ranks(contiguous = contiguous)
 		if len(ranks) == 0: return None
 		if len(ranks) == 1: return 10.0
-		j = ranks.index(2)
-		v = 10.0 if j == 1 else 9.0
-		for i in range(j):
-			ranks[i] = v
-		for i in range(j, len(ranks)):
-			ranks[i] = max(0.0, 10.0 - ranks[i])
+		topscore = 9.0 if ranks[0][1] == ranks[1][1] else 10.0
+		ranks = [topscore if r[1] == 1 else max(0.0, 10.0 - r[1]) for r in ranks]
 		return ranks
 
-	def rank(self, rid, contiguous=False):
-		ranks = self.ranks(contiguous)
-		return ranks[rid]
+	def rank(self, rid, contiguous = False):
+		ranks = self.ranks(contiguous = contiguous)
+		for i, r in ranks:
+			if i == rid:
+				return r
 
 	def pscore(self, rid):
 		i = self.points_column_index()
 		return float(self.rows[rid][i])
 
-	def rscore(self, rid):
-		return self.rscores()[rid]
+	def rscore(self, rid, contiguous = False):
+		return self.rscores(contiguous = contiguous)[rid]
+
+	def players(self):
+		t = self.type
+		t = t.lstrip("t/")
+		#~ print(t)
+		if t.startswith("#N"):
+			for row in self.rows:
+				yield int(row[0]), row[1]
+		#~ elif t.startswith("RWSE"):
+			#~ d = set()
+			#~ for row in self.rows:
+				#~ d.add(row[1])
+				#~ d.add(row[2])
+			#~ for i, n in enumerate(sorted(d), start=1):
+				#~ yield i, n

@@ -1,10 +1,10 @@
-import sys
-import math
+import argparse, math, os, sys
 
 from lib.File import File
 from lib.Names import Name, Synonyms, DEFAULT_SYNONYMS
 
 from lib.History import History
+from lib.CsvTablePath import CsvTablePath
 
 from lib import tool
 
@@ -32,7 +32,7 @@ def scores_from_file(file):
 	return [float(row[cid]) for row in file.rows]
 
 
-def ranks_from_file(file, contiguous=False):
+def ranks_from_file(file, contiguous = False):
 	scores = scores_from_file(file)
 	scores = sorted(scores, reverse=True)
 	ranks = []
@@ -48,7 +48,7 @@ def ranks_from_file(file, contiguous=False):
 
 
 def gp_scores_from_file(file):
-	ranks = ranks_from_file(file, contiguous=True)
+	ranks = ranks_from_file(file, contiguous = True)
 	if len(ranks) == 0: return None
 	if len(ranks) == 1: return 10.0
 	j = ranks.index(2)
@@ -338,63 +338,95 @@ def print_cumulative_tournament_results_csv(history, file=sys.stdout):
 
 
 def print_best_tournament_results_html(history, file=sys.stdout):
-	history = sort_by_tournament_results(history)
+	history.sort_by_rscores()
 
-	sizes = get_column_sizes(history)
-	#~ print(sizes)
+	#~ for player in his.players:
+		#~ print(player.name)
+		#~ for score in player.scores:
+			#~ print("%4s | %4s | %4s   %s" % (tool.ftos(score.pscore), tool.ftos(score.rscore), tool.ftos(score.rank), score.fid.file.path))
 
-	file.write("#,Name")
+	file.write('<table>\n\t<thead>\n\t\t<tr>\n')
+	file.write("\t\t\t<th>#</th>\n\t\t\t<th>Name</th>\n")
 
-	for i in range(1, sizes["max_scores_count"] + 1):
-		file.write(",%d" % i)
-	file.write("\n")
+	for i in range(1, history.max_scores_count + 1):
+		file.write("\t\t\t<th>%d</th>\n" % i)
+	file.write("\t\t</tr>\n\t</thead>\n\t<tbody>\n")
 
 	place = 0
-	for name, scores, totals in history:
+	for player in history.players:
+		name = player.name
+		file.write('\t\t<tr>\n')
 		place += 1
-		file.write("%d,%s" % (place, name))
+		file.write('\t\t\t<td>%d</td>\n\t\t\t<td>%s</td>\n' % (place, name))
+
+		scores = [score for score in player.scores]
+		scores += [None] * (his.max_scores_count - len(scores))
+
 		for score in scores:
 			if not score:
-				file.write(",")
+				file.write('\t\t\t<td></td>\n')
 			else:
-				file.write("," + tool.ftos(score))
-		file.write("\n")
+				s = tool.ftos(score.rscore)
+				p = CsvTablePath.parse(score.fid.file.path)
+				p = "vereinsturniere-%02d.html#%02d" % (p.year, p.month)
+				file.write('\t\t\t<td class="score"><a href="%s">%s</a></td>\n' % (p, s))
+		file.write('\t\t</tr>\n')
+
+	file.write('\t</tbody>\n</table>\n')
 
 
 def print_cumulative_tournament_results_html(history, file=sys.stdout):
-	history = sort_by_cumulative_results(history)
+	history.sort_by_rtotals()
 
-	sizes = get_column_sizes(history)
-	#~ print(sizes)
+	file.write('<table>\n\t<thead>\n\t\t<tr>\n')
+	file.write('\t\t\t<th>#</th>\n\t\t\t<th>x =</th>\n')
 
-	file.write("#,x = ")
-
-	for i in range(3, sizes["max_scores_count"] + 1):
-		file.write(",%d" % i)
-	file.write("\n")
+	for i in range(3, his.max_scores_count + 1):
+		file.write('\t\t\t<th>%d</th>\n' % i)
+	file.write('\t\t</tr>\n\t</thead>\n\t<tbody>\n')
 
 	place = 0
-	for name, scores, totals in history:
+	for player in history.players:
+		file.write('\t\t<tr>\n')
 		place += 1
-		file.write("%d,%s" % (place, name))
-		last_score = None
-		for score in totals:
-			if score == last_score:
-				file.write(",")
-			else:
-				last_score = score
-				file.write("," + tool.ftos(score))
-		file.write("\n")
+		name = player.name
+		file.write('\t\t\t<td>%d</td>\n\t\t\t<td>%s</td>\n' % (place, name))
 
+		scores = [score for score in player.rtotals()]
+		scores += [None] * (his.max_scores_count - 2 - len(scores))
+		last_score = None
+
+		for score in scores:
+			if not score or score == last_score:
+				file.write('\t\t\t<td></td>\n')
+			else:
+				file.write('\t\t\t<td class="score">%s</td>\n' % tool.ftos(score))
+			last_score = score
+		file.write('\t\t</tr>\n')
+
+	file.write('\t</tbody>\n</table>\n')
 
 if __name__ == "__main__":
-	filepaths = sys.argv[1:]
-	if not filepaths: exit()
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-i")
+	parser.add_argument("-s", action="store_true")
+	parser.add_argument("-c", action="store_true")
+	aa = parser.parse_args(sys.argv[1:])
+	#~ print(aa)
+
+	pp = CsvTablePath.fromIndexFile(aa.i)
+	#~ print(pp)
+
+	#~ filepaths = sys.argv[1:]
+	#~ if not filepaths: exit()
+
+	filepaths = [p.path for p in pp]
+	#~ print(filepaths)
 
 	names, synonyms = load_names_from_files(filepaths)
-	history = load_history(names, synonyms)
+	#~ history = load_history(names, synonyms)
 
-	his = History(names, synonyms)
+	his = History(names, synonyms, contiguous = False)
 
 	#~ print_names(names, synonyms)
 	#~ print_groups(names, synonyms)
@@ -407,5 +439,5 @@ if __name__ == "__main__":
 	#~ print_best_tournament_results_csv(history)
 	#~ print_cumulative_tournament_results_csv(history)
 
-	print_best_tournament_results_html(history)
-	print_cumulative_tournament_results_html(history)
+	if aa.s: print_best_tournament_results_html(his)
+	if aa.c: print_cumulative_tournament_results_html(his)
