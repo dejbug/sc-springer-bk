@@ -82,6 +82,13 @@ main > h1 {
 	font-family: sans;
 }
 
+article > h2 {
+	background-color: #eee;
+	text-align: center;
+	padding: .3em;
+	font-family: sans;
+}
+
 main > section {
 	margin: 1em;
 }

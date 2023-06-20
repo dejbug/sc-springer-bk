@@ -1,0 +1,53 @@
+{{ cat content/html-header.html }}
+{{ python tools/render.py content/navbar.html active=vereinsturniere }}
+{{ python tools/render.py content/header.html }}
+
+<main>
+
+<h1>Vereinsturniere 2022</h1>
+
+<article>
+
+<a name="08"></a>
+<h2>August (Blitz)</h2>
+<div class="table-wrapper crosstable">
+{{ python tools/csv2table.py tables/blitz-22-08.csv }}
+</div>
+
+<a name="09"></a>
+<h2>September (Schnell)</h2>
+<div class="table-wrapper crosstable">
+{{ python tools/csv2table.py tables/schnell-22-09.csv }}
+</div>
+
+<a name="10"></a>
+<h2>Oktober (Blitz)</h2>
+<div class="table-wrapper crosstable">
+{{ python tools/csv2table.py tables/blitz-22-10.csv }}
+</div>
+
+<a name="11"></a>
+<h2>November (Schnell)</h2>
+<div class="table-wrapper crosstable">
+{{ python tools/csv2table.py tables/schnell-22-11.csv }}
+</div>
+
+<a name="12"></a>
+<h2>Dezember (Blitz)</h2>
+<div class="table-wrapper crosstable">
+{{ python tools/csv2table.py tables/blitz-22-12.csv }}
+</div>
+
+<a name="gp"></a>
+<h2>Grand-Prix</h2>
+<p><a href="gp-22-08.html">Grand-Prix 2022 August-Dezember</a></p>
+
+<a name="pokal"></a>
+<h2>Pokal</h2>
+<p><a href="pokal-22.html">Pokalturnier 2022</a></p>
+
+</article>
+</main>
+
+{{ python tools/render.py content/footer.html }}
+{{ cat content/html-footer.html }}
