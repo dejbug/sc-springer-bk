@@ -6,14 +6,15 @@
 [ ] Rig *all* pages so they trigger make (via index.php).
 [ ] Render option to run a preprocessor command on content, for simple substitution.
 [ ] More mobile-friendly cross-tables: keep pids and names in view when scrolling.
-[ ] tables.py needs support for
+[o] tables.py needs support for
 	[x] double-rr (e.g. blitz-23-01.csv), and
 	[ ]	the various swiss types (i.e. schnell-*.csv).
-[ ] Fix the filenames in tables (some blitzes are schnells).
+[x] Fix the filenames in tables (some blitzes are schnells).
 [ ] Append a legend to tournament tables.
 [ ] Clean up tools. Make the code more readable for others.
 [ ] Add a tool to auto-generate GPs.
 	[ ] Ask others whether we could switch to a 6-month GP cycle. To simplify things.
+	[ ] List dependencies for GP.
 [ ] Remove makefile HACKS
 [ ] Update impressum.
 	[ ] Presidency / Administration info.
