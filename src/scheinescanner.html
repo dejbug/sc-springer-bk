@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<title>Scheine-Scanner</title>
+<style>
+:root {
+	font-family: sans;
+	background-color: #eee;
+}
+#layout {
+	margin-top: 1em;
+	width: 100%;
+	overflow: clip;
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: stretch;
+}
+#layout > * {
+	margin-top: .5em;
+}
+#button-pane {
+	display: grid;
+	gap: 1em;
+	grid-template-columns: auto auto;
+}
+video {
+	border: 1em solid grey;
+	background-color: grey;
+}
+button {
+	font-size: 4rem;
+	padding: .5rem;
+}
+#logger {
+	border: thin solid black;
+	font-family: monospace;
+	
+	padding: .3rem;
+	height: 100em;
+}
+#cam-qr-result {
+	font-family: monospace;
+	font-size: 4em;
+	border: thin solid black;
+	padding: .3em;
+}
+</style>
+<style>
+#video-container {
+	line-height: 0;
+}
+video.status-false {
+	border-color: tomato !important;
+}
+video.status-true {
+	border-color: lime !important;
+}
+#video-container.example-style-1 .scan-region-highlight-svg,
+#video-container.example-style-1 .code-outline-highlight {
+	stroke: #64a2f3 !important;
+}
+#video-container.example-style-2 {
+	position: relative;
+	width: max-content;
+	height: max-content;
+	overflow: hidden;
+}
+#video-container.example-style-2 .scan-region-highlight {
+	border-radius: 30px;
+	outline: rgba(0, 0, 0, .25) solid 50vmax;
+}
+#video-container.example-style-2 .scan-region-highlight-svg {
+	display: none;
+}
+#video-container.example-style-2 .code-outline-highlight {
+	stroke: rgba(255, 255, 255, .5) !important;
+	stroke-width: 15px !important;
+	stroke-dasharray: none !important;
+}
+</style>
+</head>
+<body>
+<div id="layout">
+	<!--<div id="button-pane">
+		<button id="start-button">Start</button>
+		<button id="stop-button">Stop</button>
+	</div>-->
+	<div id="video-container">
+		<video id="qr-video"></video>
+	</div>
+	<div id="cam-qr-result"></div>
+	<!--<pre id="debug-output"></pre>-->
+	<textarea id="logger"></textarea>
+</div>
+
+<!--<script src="../qr-scanner.umd.min.js"></script>-->
+<!--<script src="../qr-scanner.legacy.min.js"></script>-->
+<script type="module">
+import QrScanner from "./qr-scanner-master/qr-scanner.min.js";
+
+//~ function trace(text) {
+//~ 	const e = document.getElementById("debug-output");
+//~ 	e.textContent += String(text) + "\n";
+//~ }
+//~ console.log = trace;
+//~ console.warn = trace;
+
+const video = document.getElementById('qr-video');
+const videoContainer = document.getElementById('video-container');
+const camQrResult = document.getElementById('cam-qr-result');
+const logger = document.getElementById("logger");
+
+function log(text) {
+	logger.textContent += String(text) + "\n";
+//~ 	const p = document.createElement("div");
+//~ 	p.textContent = text;
+//~ 	logger.appendChild(p);
+}
+
+let statusTimer = undefined;
+function setStatus(ok, delay = 500) {
+	if (statusTimer) clearTimeout(statusTimer);
+	video.classList.remove(ok ? "status-false" : "status-true");
+	video.classList.add(ok ? "status-true" : "status-false");
+	statusTimer = setTimeout(() => {
+		video.classList.remove(ok ? "status-true" : "status-false");
+	}, delay);
+}
+
+function parseCodeFromUrl(text) {
+	const m = text.match(/https?:\/\/vereinsschein-qr\.rewe\.de\/\?code=R-(.+)/);
+	return m ? m[1] : text;
+}
+
+setTimeout(() => console.log(parseCodeFromUrl("https://vereinsschein-qr.rewe.de/?code=R-2wNZd8YJcD2")), 200);
+
+let lastResult = undefined;
+function setResult(label, result) {
+	if (lastResult === result.data) return;
+	lastResult = result.data;
+//~ 	trace(label, result.data);
+	label.textContent = result.data;
+	label.style.color = 'teal';
+	clearTimeout(label.highlightTimeout);
+	label.highlightTimeout = setTimeout(() => label.style.color = 'inherit', 100);
+	log(parseCodeFromUrl(result.data));
+	setStatus(true);
+}
+
+const scanner = new QrScanner(
+	video,
+	result => setResult(camQrResult, result),
+	{
+		onDecodeError: error => {
+			camQrResult.textContent = error;
+			camQrResult.style.color = 'inherit';
+//~ 			trace("onDecodeError", error);
+			setStatus(false);
+		},
+		highlightScanRegion: true,
+		highlightCodeOutline: true,
+	}
+);
+//~ window.scanner = scanner; // for debugging
+
+scanner.start().then(() => {
+	scanner.setCamera("environment"); // environment, user
+});
+
+// default-style, example-style-1, example-style-2
+videoContainer.className = "example-style-2";
+scanner._updateOverlay();
+
+scanner.$canvas.style.display = "block"; // block, none
+scanner.setInversionMode("original"); ; // original, invert, both
+
+document.getElementById('start-button').addEventListener('click', () => {
+	scanner.start();
+	pulse();
+});
+document.getElementById('stop-button').addEventListener('click', () => {
+	scanner.stop();
+});
+</script>
+</body>
+</html>
