@@ -55,9 +55,9 @@ button {
 	position: absolute;
 	display: block;
 	width: calc(100% - 40px);
+	color: #aaff33 !important;
 	top: 40px;
 	left: 20px;
-	color: #aaff33 !important;
 	font-family: monospace;
 	padding: .3em;
 	text-align: center;
@@ -208,33 +208,36 @@ function parseCodeFromUrl(text) {
 //~ 	dbinfo.classList.add(json.status ? "status-true" : "status-false");
 //~ }
 
+let resultsDict = new Map();
 let lastResult = undefined;
-function setResult(label, result) {
-//~ 	trace(label, result.data);
-	label.textContent = result.data;
-	label.style.color = 'teal';
-	clearTimeout(label.highlightTimeout);
-	label.highlightTimeout = setTimeout(() => label.style.color = 'inherit', 100);
+function onDecodeSuccess(result) {
+	camQrResult.textContent = result.data;
 
-	if (lastResult === result.data) return;
-	lastResult = result.data;
+//~ 	if (lastResult === result.data) return;
+//~ 	lastResult = result.data;
+
+	const code = parseCodeFromUrl(result.data);
+
+	if (resultsDict.has(code)) return;
+	resultsDict.set(code);
 
 	pulse(video, true);
-	const code = parseCodeFromUrl(result.data);
 //~ 	sendCodeToDatabaseServer(code);
-	log(code);
 //~ 	addCodeToLocalStorage(code);
+	log(code);
+
+//~ 	navigator.vibrate(250);
 }
 
 const scanner = new QrScanner(
 	video,
-	result => setResult(camQrResult, result),
+	result => onDecodeSuccess(result),
 	{
 		onDecodeError: error => {
 			camQrResult.textContent = "Nichts gefunden."; // error;
 			camQrResult.style.color = 'inherit';
 //~ 			trace("onDecodeError", error);
-			pulse(video, false);
+//~ 			pulse(video, false);
 		},
 		highlightScanRegion: true,
 		highlightCodeOutline: true,
@@ -255,11 +258,10 @@ scanner.setInversionMode("original"); ; // original, invert, both
 
 const clipboardButton = document.getElementById("copy-to-clipboard");
 clipboardButton.addEventListener("click", () => {
-	console.log(logger.textContent);
+//~ 	console.log(logger.textContent);
 	navigator.clipboard.writeText(logger.textContent)
 	.then(() => {
 		pulse(clipboardButton, true);
-		console.log();
 	},
 	() => {
 		pulse(clipboardButton, false);
