@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+	<meta
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Scheine-Scanner</title>
 <style>
+*, *:before, *:after {
+	margin: 0;
+	box-sizing: border-box;
+}
 :root {
 	font-family: sans;
-	font-size: 4em;
+	font-size: 1.4rem;
 	background-color: #eee;
 }
 #layout {
-	margin-top: 1em;
-	width: 100%;
-	overflow: clip;
 	display: flex;
 	flex-flow: column nowrap;
 	align-items: stretch;
+	overflow: clip;
 }
 #layout > * {
 	margin-top: .5em;
@@ -23,6 +27,7 @@
 video {
 	border: 4vw solid grey;
 	background-color: grey;
+	max-width: 100vw;
 }
 #button-pane {
 	display: grid;
@@ -36,13 +41,9 @@ button {
 	border: thin solid black;
 	font-family: monospace;
 	padding: .3rem;
+	height: 30em;
 }
-#logger th {
-	text-align: left;
-}
-#results-pane {
-	display: flex;
-}
+
 #db-info {
 	margin-right: auto;
 	min-width: 1em;
@@ -51,9 +52,15 @@ button {
 	padding: .3rem;
 }
 #cam-qr-result {
+	position: absolute;
+	display: block;
+	width: calc(100% - 40px);
+	top: 40px;
+	left: 20px;
+	color: #aaff33 !important;
 	font-family: monospace;
-	border: thin solid black;
 	padding: .3em;
+	text-align: center;
 }
 </style>
 <style>
@@ -100,11 +107,12 @@ video.status-true {
 		<video id="qr-video"></video>
 	</div>
 	<div id="results-pane">
-		<div id="db-info"></div>
+		<!--<div id="db-info"></div>-->
 		<div id="cam-qr-result"></div>
 	</div>
 	<!--<pre id="debug-output"></pre>-->
-	<table id="logger">
+	<textarea id="logger"></textarea>
+	<!--<table id="logger">
 	<thead>
 		<tr>
 			<th>#</th>
@@ -113,11 +121,9 @@ video.status-true {
 	</thead>
 	<tbody>
 	</tbody>
-	</table>
+	</table>-->
 </div>
 
-<!--<script src="../qr-scanner.umd.min.js"></script>-->
-<!--<script src="../qr-scanner.legacy.min.js"></script>-->
 <script src="vendor/nimiq/qr-scanner.umd.min.js"></script>
 <script>
 //~ console.log(QrScanner);
@@ -144,36 +150,39 @@ function addCodeToLocalStorage(text) {
 	localStorage["scheinescanner"] = JSON.stringify(s);
 }
 
-function sendCodeToDatabaseServer(code) {
-	fetch("http://springer.sportsontheweb.net/api.php?code=" + code)
-	.then(response => response.json())
-	.then(json => {
-		setDbInfoFromDbResult(json);
-		log(json.count, code);
-	});
+//~ function sendCodeToDatabaseServer(code) {
+//~ 	fetch("http://springer.sportsontheweb.net/api.php?code=" + code)
+//~ 	.then(response => response.json())
+//~ 	.then(json => {
+//~ 		setDbInfoFromDbResult(json);
+//~ 		log2(json.count, code);
+//~ 	});
+//~ }
+
+function log(text) {
+	logger.textContent = String(text) + "\n" + logger.textContent;
 }
 
-function log(count, code) {
-//~ 	logger.textContent += String(text) + "\n";
-
+//~ function log1(text) {
 //~ 	const p = document.createElement("div");
 //~ 	p.textContent = text;
 //~ 	logger.appendChild(p);
+//~ }
 
-	const td0 = document.createElement("td");
-	td0.textContent = count;
+//~ function log2(count, code) {
+//~ 	const td0 = document.createElement("td");
+//~ 	td0.textContent = count;
 
-	const td1 = document.createElement("td");
-	td1.textContent = code;
+//~ 	const td1 = document.createElement("td");
+//~ 	td1.textContent = code;
 
-	const tr = document.createElement("tr");
-	tr.appendChild(td0);
-	tr.appendChild(td1);
+//~ 	const tr = document.createElement("tr");
+//~ 	tr.appendChild(td0);
+//~ 	tr.appendChild(td1);
 
-	const tbody = logger.children[1];
-//~ 	tbody.appendChild(tr);
-	tbody.insertBefore(tr, tbody.firstChild);
-}
+//~ 	const tbody = logger.children[1];
+//~ 	tbody.insertBefore(tr, tbody.firstChild);
+//~ }
 
 let statusTimer = undefined;
 function setStatus(ok, delay = 500) {
@@ -191,26 +200,28 @@ function parseCodeFromUrl(text) {
 }
 //~ setTimeout(() => console.log(parseCodeFromUrl("https://vereinsschein-qr.rewe.de/?code=R-12345678910")), 200);
 
-function setDbInfoFromDbResult(json) {
-	dbinfo.textContent = json.count;
-	dbinfo.classList.remove("status-true");
-	dbinfo.classList.remove("status-false");
-	dbinfo.classList.add(json.status ? "status-true" : "status-false");
-}
+//~ function setDbInfoFromDbResult(json) {
+//~ 	dbinfo.textContent = json.count;
+//~ 	dbinfo.classList.remove("status-true");
+//~ 	dbinfo.classList.remove("status-false");
+//~ 	dbinfo.classList.add(json.status ? "status-true" : "status-false");
+//~ }
 
 let lastResult = undefined;
 function setResult(label, result) {
-	if (lastResult === result.data) return;
-	lastResult = result.data;
 //~ 	trace(label, result.data);
 	label.textContent = result.data;
 	label.style.color = 'teal';
 	clearTimeout(label.highlightTimeout);
 	label.highlightTimeout = setTimeout(() => label.style.color = 'inherit', 100);
 
+	if (lastResult === result.data) return;
+	lastResult = result.data;
+
 	setStatus(true);
 	const code = parseCodeFromUrl(result.data);
-	sendCodeToDatabaseServer(code);
+//~ 	sendCodeToDatabaseServer(code);
+	log(code);
 //~ 	addCodeToLocalStorage(code);
 }
 
