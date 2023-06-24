@@ -97,7 +97,7 @@ video.status-true {
 <!--<script src="../qr-scanner.umd.min.js"></script>-->
 <!--<script src="../qr-scanner.legacy.min.js"></script>-->
 <script type="module">
-import QrScanner from "./qr-scanner-master/qr-scanner.min.js";
+import QrScanner from "./vendor/nimiq/qr-scanner.min.js"
 
 //~ function trace(text) {
 //~ 	const e = document.getElementById("debug-output");
@@ -132,8 +132,7 @@ function parseCodeFromUrl(text) {
 	const m = text.match(/https?:\/\/vereinsschein-qr\.rewe\.de\/\?code=R-(.+)/);
 	return m ? m[1] : text;
 }
-
-setTimeout(() => console.log(parseCodeFromUrl("https://vereinsschein-qr.rewe.de/?code=R-2wNZd8YJcD2")), 200);
+//~ setTimeout(() => console.log(parseCodeFromUrl("https://vereinsschein-qr.rewe.de/?code=R-12345678910")), 200);
 
 let lastResult = undefined;
 function setResult(label, result) {

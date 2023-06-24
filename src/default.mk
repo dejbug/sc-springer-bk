@@ -39,6 +39,8 @@ dist/schnell-*.html : dist/schnell-%.html : tables/schnell-%.csv tools/csv2table
 
 dist/aktuelles.html : content/news.txt tools/news.py
 
+dist/scheinescanner.html : dist/vendor/nimiq/qr-scanner.min.js
+
 # HACKS
 
 tables/schnell-23-06.csv : tables/schnell-23-06-games.csv
