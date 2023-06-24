@@ -6,6 +6,7 @@
 <style>
 :root {
 	font-family: sans;
+	font-size: 4em;
 	background-color: #eee;
 }
 #layout {
@@ -19,29 +20,38 @@
 #layout > * {
 	margin-top: .5em;
 }
+video {
+	border: 4vw solid grey;
+	background-color: grey;
+}
 #button-pane {
 	display: grid;
 	gap: 1em;
 	grid-template-columns: auto auto;
 }
-video {
-	border: 1em solid grey;
-	background-color: grey;
-}
 button {
-	font-size: 4rem;
 	padding: .5rem;
 }
 #logger {
 	border: thin solid black;
 	font-family: monospace;
-
 	padding: .3rem;
-	height: 100em;
+}
+#logger th {
+	text-align: left;
+}
+#results-pane {
+	display: flex;
+}
+#db-info {
+	margin-right: auto;
+	min-width: 1em;
+	font-family: monospace;
+	border: thin solid black;
+	padding: .3rem;
 }
 #cam-qr-result {
 	font-family: monospace;
-	font-size: 4em;
 	border: thin solid black;
 	padding: .3em;
 }
@@ -89,9 +99,21 @@ video.status-true {
 	<div id="video-container">
 		<video id="qr-video"></video>
 	</div>
-	<div id="cam-qr-result"></div>
+	<div id="results-pane">
+		<div id="db-info"></div>
+		<div id="cam-qr-result"></div>
+	</div>
 	<!--<pre id="debug-output"></pre>-->
-	<textarea id="logger"></textarea>
+	<table id="logger">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Code</th>
+		</tr>
+	</thead>
+	<tbody>
+	</tbody>
+	</table>
 </div>
 
 <!--<script src="../qr-scanner.umd.min.js"></script>-->
@@ -110,6 +132,7 @@ const video = document.getElementById('qr-video');
 const videoContainer = document.getElementById('video-container');
 const camQrResult = document.getElementById('cam-qr-result');
 const logger = document.getElementById("logger");
+const dbinfo = document.getElementById("db-info");
 
 if (!("scheinescanner" in localStorage))
 	localStorage["scheinescanner"] = JSON.stringify([]);
@@ -120,11 +143,35 @@ function addCodeToLocalStorage(text) {
 	localStorage["scheinescanner"] = JSON.stringify(s);
 }
 
-function log(text) {
-	logger.textContent += String(text) + "\n";
+function sendCodeToDatabaseServer(code) {
+	fetch("api.php?code=" + code)
+	.then(response => response.json())
+	.then(json => {
+		setDbInfoFromDbResult(json);
+		log(json.count, code);
+	});
+}
+
+function log(count, code) {
+//~ 	logger.textContent += String(text) + "\n";
+
 //~ 	const p = document.createElement("div");
 //~ 	p.textContent = text;
 //~ 	logger.appendChild(p);
+
+	const td0 = document.createElement("td");
+	td0.textContent = count;
+
+	const td1 = document.createElement("td");
+	td1.textContent = code;
+
+	const tr = document.createElement("tr");
+	tr.appendChild(td0);
+	tr.appendChild(td1);
+
+	const tbody = logger.children[1];
+//~ 	tbody.appendChild(tr);
+	tbody.insertBefore(tr, tbody.firstChild);
 }
 
 let statusTimer = undefined;
@@ -143,6 +190,13 @@ function parseCodeFromUrl(text) {
 }
 //~ setTimeout(() => console.log(parseCodeFromUrl("https://vereinsschein-qr.rewe.de/?code=R-12345678910")), 200);
 
+function setDbInfoFromDbResult(json) {
+	dbinfo.textContent = json.count;
+	dbinfo.classList.remove("status-true");
+	dbinfo.classList.remove("status-false");
+	dbinfo.classList.add(json.status ? "status-true" : "status-false");
+}
+
 let lastResult = undefined;
 function setResult(label, result) {
 	if (lastResult === result.data) return;
@@ -153,10 +207,10 @@ function setResult(label, result) {
 	clearTimeout(label.highlightTimeout);
 	label.highlightTimeout = setTimeout(() => label.style.color = 'inherit', 100);
 
-	const code = parseCodeFromUrl(result.data);
-	log(code);
-	addCodeToLocalStorage(code);
 	setStatus(true);
+	const code = parseCodeFromUrl(result.data);
+	addCodeToLocalStorage(code);
+	sendCodeToDatabaseServer(code);
 }
 
 const scanner = new QrScanner(
