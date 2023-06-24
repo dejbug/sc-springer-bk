@@ -35,7 +35,7 @@ button {
 #logger {
 	border: thin solid black;
 	font-family: monospace;
-	
+
 	padding: .3rem;
 	height: 100em;
 }
@@ -111,6 +111,15 @@ const videoContainer = document.getElementById('video-container');
 const camQrResult = document.getElementById('cam-qr-result');
 const logger = document.getElementById("logger");
 
+if (!("scheinescanner" in localStorage))
+	localStorage["scheinescanner"] = JSON.stringify([]);
+
+function addCodeToLocalStorage(text) {
+	const s = JSON.parse(localStorage["scheinescanner"]);
+	s.push(text);
+	localStorage["scheinescanner"] = JSON.stringify(s);
+}
+
 function log(text) {
 	logger.textContent += String(text) + "\n";
 //~ 	const p = document.createElement("div");
@@ -143,7 +152,10 @@ function setResult(label, result) {
 	label.style.color = 'teal';
 	clearTimeout(label.highlightTimeout);
 	label.highlightTimeout = setTimeout(() => label.style.color = 'inherit', 100);
-	log(parseCodeFromUrl(result.data));
+
+	const code = parseCodeFromUrl(result.data);
+	log(code);
+	addCodeToLocalStorage(code);
 	setStatus(true);
 }
 
@@ -152,7 +164,7 @@ const scanner = new QrScanner(
 	result => setResult(camQrResult, result),
 	{
 		onDecodeError: error => {
-			camQrResult.textContent = error;
+			camQrResult.textContent = "Nichts gefunden."; // error;
 			camQrResult.style.color = 'inherit';
 //~ 			trace("onDecodeError", error);
 			setStatus(false);
@@ -174,13 +186,13 @@ scanner._updateOverlay();
 scanner.$canvas.style.display = "block"; // block, none
 scanner.setInversionMode("original"); ; // original, invert, both
 
-document.getElementById('start-button').addEventListener('click', () => {
-	scanner.start();
-	pulse();
-});
-document.getElementById('stop-button').addEventListener('click', () => {
-	scanner.stop();
-});
+//~ document.getElementById('start-button').addEventListener('click', () => {
+//~ 	scanner.start();
+//~ 	pulse();
+//~ });
+//~ document.getElementById('stop-button').addEventListener('click', () => {
+//~ 	scanner.stop();
+//~ });
 </script>
 </body>
 </html>
