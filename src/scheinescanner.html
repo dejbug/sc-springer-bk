@@ -144,7 +144,7 @@ function addCodeToLocalStorage(text) {
 }
 
 function sendCodeToDatabaseServer(code) {
-	fetch("http://springer.sportsontheweb.net/api.php?code=" + code)
+	fetch("springer.sportsontheweb.net/api.php?code=" + code)
 	.then(response => response.json())
 	.then(json => {
 		setDbInfoFromDbResult(json);
@@ -209,8 +209,8 @@ function setResult(label, result) {
 
 	setStatus(true);
 	const code = parseCodeFromUrl(result.data);
-	addCodeToLocalStorage(code);
 	sendCodeToDatabaseServer(code);
+//~ 	addCodeToLocalStorage(code);
 }
 
 const scanner = new QrScanner(
