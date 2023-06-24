@@ -1,11 +1,25 @@
-import os, re
-
 import init
-import tools.lib.File
 
-for n in os.listdir("tables"):
-	p = "tables/" + n
-	file = tools.lib.File.File(p)
-	t = file.type
-	h = re.sub(r"\s*", "", file.header)
-	print("%35s | %12s | %s" % (n, t, h))
+#~ import lib.File
+from lib.CsvFile import CsvFile, CsvFileError
+
+root = init.root(__file__, "src")
+tdir = init.path(__file__, "src", "tables")
+
+for p in init.listdir(tdir):
+	try: file = CsvFile(p)
+	except CsvFileError as e:
+		print("! %s\n" % e)
+		continue
+
+	print("%24s {%-3s} %11s [%s]" % (file.filename,
+		file.type,
+		file.type.format,
+		",".join(file.header)
+	))
+
+	#~ print()
+	#~ for rid in range(file.rowcount):
+		#~ print(" ", file.name(rid))
+
+	print()

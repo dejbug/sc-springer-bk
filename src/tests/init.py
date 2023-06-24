@@ -24,3 +24,8 @@ def path(path, part, rel):
 	if not rel.startswith("/"): rel = "/" + rel
 	r = root(path, part)
 	if r: return os.path.abspath(r + rel)
+
+def listdir(path):
+	for t,dd,nn in os.walk(path):
+		for n in nn:
+			yield os.path.join(t, n)

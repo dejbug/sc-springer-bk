@@ -11,14 +11,15 @@ class File:
 		self._header = None
 		self._rows = None
 
-	def check(self):
-		if not self.path: raise self.ArgError
-		if not os.path.isfile(self.path): raise self.NotFoundError
+	@classmethod
+	def check(cls, path):
+		if not path: raise cls.ArgError
+		if not os.path.isfile(path): raise cls.NotFoundError
 		return True
 
 	@property
 	def header(self):
-		self.check()
+		self.check(self.path)
 		if not self._header:
 			with open(self.path, "r", encoding="utf8") as file:
 				self._header = file.readline().strip()
@@ -26,7 +27,7 @@ class File:
 
 	@property
 	def rows(self):
-		self.check()
+		self.check(self.path)
 		if not self._rows:
 			with open(self.path, "r", encoding="utf8") as file:
 				self._header = file.readline().strip()
