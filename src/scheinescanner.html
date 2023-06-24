@@ -118,8 +118,9 @@ video.status-true {
 
 <!--<script src="../qr-scanner.umd.min.js"></script>-->
 <!--<script src="../qr-scanner.legacy.min.js"></script>-->
-<script type="module">
-import QrScanner from "./vendor/nimiq/qr-scanner.min.js"
+<script src="vendor/nimiq/qr-scanner.umd.min.js"></script>
+<script>
+//~ console.log(QrScanner);
 
 //~ function trace(text) {
 //~ 	const e = document.getElementById("debug-output");
@@ -144,7 +145,7 @@ function addCodeToLocalStorage(text) {
 }
 
 function sendCodeToDatabaseServer(code) {
-	fetch("springer.sportsontheweb.net/api.php?code=" + code)
+	fetch("http://springer.sportsontheweb.net/api.php?code=" + code)
 	.then(response => response.json())
 	.then(json => {
 		setDbInfoFromDbResult(json);
