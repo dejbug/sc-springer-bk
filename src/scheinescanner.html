@@ -67,10 +67,10 @@ button {
 #video-container {
 	line-height: 0;
 }
-video.status-false {
+.status-false {
 	border-color: tomato !important;
 }
-video.status-true {
+.status-true {
 	border-color: lime !important;
 }
 #video-container.example-style-1 .scan-region-highlight-svg,
@@ -111,6 +111,7 @@ video.status-true {
 		<div id="cam-qr-result"></div>
 	</div>
 	<!--<pre id="debug-output"></pre>-->
+	<button id="copy-to-clipboard">Alles Kopieren</button>
 	<textarea id="logger"></textarea>
 	<!--<table id="logger">
 	<thead>
@@ -150,6 +151,16 @@ function addCodeToLocalStorage(text) {
 	localStorage["scheinescanner"] = JSON.stringify(s);
 }
 
+function pulse(element, ok, delay=500) {
+	if (element.pulseTimer) clearTimeout(element.pulseTimer);
+	element.classList.remove(ok ? "status-false" : "status-true");
+	element.classList.add(ok ? "status-true" : "status-false");
+	element.pulseTimer = setTimeout(() => {
+		element.classList.remove(ok ? "status-true" : "status-false");
+		element.pulseTimer = undefined;
+	}, delay);
+}
+
 //~ function sendCodeToDatabaseServer(code) {
 //~ 	fetch("http://springer.sportsontheweb.net/api.php?code=" + code)
 //~ 	.then(response => response.json())
@@ -184,16 +195,6 @@ function log(text) {
 //~ 	tbody.insertBefore(tr, tbody.firstChild);
 //~ }
 
-let statusTimer = undefined;
-function setStatus(ok, delay = 500) {
-	if (statusTimer) clearTimeout(statusTimer);
-	video.classList.remove(ok ? "status-false" : "status-true");
-	video.classList.add(ok ? "status-true" : "status-false");
-	statusTimer = setTimeout(() => {
-		video.classList.remove(ok ? "status-true" : "status-false");
-	}, delay);
-}
-
 function parseCodeFromUrl(text) {
 	const m = text.match(/https?:\/\/vereinsschein-qr\.rewe\.de\/\?code=R-(.+)/);
 	return m ? m[1] : text;
@@ -218,7 +219,7 @@ function setResult(label, result) {
 	if (lastResult === result.data) return;
 	lastResult = result.data;
 
-	setStatus(true);
+	pulse(video, true);
 	const code = parseCodeFromUrl(result.data);
 //~ 	sendCodeToDatabaseServer(code);
 	log(code);
@@ -233,7 +234,7 @@ const scanner = new QrScanner(
 			camQrResult.textContent = "Nichts gefunden."; // error;
 			camQrResult.style.color = 'inherit';
 //~ 			trace("onDecodeError", error);
-			setStatus(false);
+			pulse(video, false);
 		},
 		highlightScanRegion: true,
 		highlightCodeOutline: true,
@@ -252,6 +253,18 @@ scanner._updateOverlay();
 scanner.$canvas.style.display = "block"; // block, none
 scanner.setInversionMode("original"); ; // original, invert, both
 
+const clipboardButton = document.getElementById("copy-to-clipboard");
+clipboardButton.addEventListener("click", () => {
+	console.log(logger.textContent);
+	navigator.clipboard.writeText(logger.textContent)
+	.then(() => {
+		pulse(clipboardButton, true);
+		console.log();
+	},
+	() => {
+		pulse(clipboardButton, false);
+	});
+});
 //~ document.getElementById('start-button').addEventListener('click', () => {
 //~ 	scanner.start();
 //~ 	pulse();
