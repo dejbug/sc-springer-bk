@@ -21,6 +21,8 @@ def iter_blocks(ipath):
 	if block: yield block
 
 def parse_block(block):
+	if block == ["STOP"]: return None
+
 	news = {}
 
 	m = re.match(r'^\s*(\d\d?)\.(\d\d?).(\d{2,4})\s*(?:.\s*(\d\d?):(\d\d?))?', block[0])
@@ -54,6 +56,7 @@ def germandate(t):
 
 def printnews(ipath):
 	for news in iter(ipath):
+		if not news: break;
 		#~ print("time: |", news["time"].strftime("%Y-%m-%d / %H:%M"))
 		print("time: |", germandate(news["time"]))
 		print("text: |", news["text"])
@@ -67,6 +70,7 @@ def printnews(ipath):
 def printhtml(ipath, ofile=sys.stdout, prefix=""):
 	last_date = None
 	for news in iter(ipath):
+		if not news: break;
 		cls = "news"
 		#~ if len(news["text"]) < 200:
 			#~ cls += " card"
