@@ -347,7 +347,7 @@ nav .active {
 		width: 68em;
 	}
 	.news.card {
-		width: 34em;
+		/* width: 34em; */
 	}
 }
 
