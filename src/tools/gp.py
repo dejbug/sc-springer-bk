@@ -409,8 +409,8 @@ def print_cumulative_tournament_results_html(history, file=sys.stdout):
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-i", help="index file")
-	parser.add_argument("-s", action="store_true")
-	parser.add_argument("-c", action="store_true")
+	parser.add_argument("-s", action="store_true", help="single results")
+	parser.add_argument("-c", action="store_true", help="cumulative results")
 	aa = parser.parse_args(sys.argv[1:])
 	#~ print(aa)
 

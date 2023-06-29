@@ -59,8 +59,10 @@ class History:
 				rscore = file.rscore(rid, contiguous = self.contiguous)
 				rank = file.rank(rid, contiguous = self.contiguous)
 
-				if player.name == "Messer":
-					print(player.name, file.path, "| RID", rid, "| PSCORE", pscore, "| RANK", rank, "| RSCORE", rscore)
+				# There were issues with the ranking, particularly visible in how Messer's
+				#	performance was mis-calculated.
+				#~ if player.name == "Messer":
+					#~ print(player.name, file.path, "| RID", rid, "| PSCORE", pscore, "| RANK", rank, "| RSCORE", rscore)
 
 				score = self.Score(name.fid, pscore, rscore, rank)
 				player.scores.append(score)

@@ -109,37 +109,54 @@ class File:
 		if t.endswith("#NGSRVPBS"): return -3
 		raise Exception("score column not found: unknown table")
 
-	def ranks(self, contiguous = False):
+	def tiebreaks_column_index(self):
+		if self.type.endswith("#NGSRVPBS"): return [-2, -1]
+		return []
+
+	def ranks(self, contiguous = False, roworder = False):
 		#~ pscores = self.pscores()
 		#~ pscores = sorted(pscores, reverse = True)
 		#~ lut = range(len(pscores))
 		#~ lut = sorted(lut, reverse = True, key = lambda i: pscores[i])
 		#~ print(lut)
 
-		ranks = ((i, s) for i, s in enumerate(self.pscores()))
+		ranks = ((i, s) for i, s in enumerate(self.pscores(tiebreaks = True)))
 		ranks = sorted(ranks, reverse = True, key = lambda x: x[1])
-		#~ print(ranks)
+		#~ print("ranks (sorted)   ", ranks)
 
 		last = None
-		rank = 0
-		#~ for index, score in enumerate(pscores, start=1):
-		index = 0
-		for i, score in ranks:
-			index += 1
+		for index, rowindex_score in enumerate(ranks):
+			rowindex, score = rowindex_score
 			if score != last:
 				last = score
-				rank = rank + 1 if contiguous else index
-				ranks[i] = (i, rank)
-			#~ ranks.append(rank)
+				rank = rank + 1 if contiguous else index + 1
+			else:
+				rank = index
+			ranks[index] = (rowindex, rank)
+
+		if roworder:
+			ranks = sorted(ranks, reverse = False, key = lambda x: x[0])
+			#~ print("ranks (de-sorted)", ranks)
+
 		#~ print(self.path, ranks)
 		return ranks
 
-	def pscores(self):
+	def pscores(self, tiebreaks = False, shift = 100):
 		i = self.points_column_index()
-		return [float(row[i]) for row in self.rows]
+		ss = [float(row[i]) for row in self.rows]
+		if tiebreaks:
+			ii = self.tiebreaks_column_index()
+			if ii:
+				ss = [[s] for s in ss]
+				for j, row in enumerate(self.rows):
+					for i in ii:
+						ss[j].append(float(row[i]))
+				if shift:
+					ss = [p * shift * shift + bu * shift + so * shift for p, bu, so in ss]
+		return ss
 
 	def rscores(self, contiguous = False):
-		ranks = self.ranks(contiguous = contiguous)
+		ranks = self.ranks(contiguous = contiguous, roworder = True)
 		if len(ranks) == 0: return None
 		if len(ranks) == 1: return 10.0
 		topscore = 9.0 if ranks[0][1] == ranks[1][1] else 10.0

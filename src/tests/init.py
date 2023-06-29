@@ -2,6 +2,8 @@ import sys, os.path
 root = os.path.dirname(__file__)
 path = os.path.abspath(root + "/../tools/")
 sys.path.insert(1, path)
+path = os.path.abspath(root + "/../")
+sys.path.insert(1, path)
 
 def root(path, part):
 	"""
