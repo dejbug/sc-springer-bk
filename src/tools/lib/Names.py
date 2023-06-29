@@ -1,4 +1,4 @@
-import re, hashlib
+import copy, hashlib, re
 from collections import namedtuple
 
 from . import abs
@@ -31,7 +31,7 @@ class Name:
 
 class Synonyms:
 	def __init__(self, synonyms):
-		self.synonyms = synonyms
+		self.synonyms = copy.deepcopy(synonyms)
 		self.unresolved = []
 		for synonym in self.synonyms:
 			for i, name in enumerate(synonym):
@@ -108,12 +108,15 @@ DEFAULT_SYNONYMS = [
 	["Budimir", "Dejan Budimir"],
 	["Hentzner", "Bernd Hentzner"],
 	["Heusel", "Bernd Heusel"],
+	["Hügelschäfer", "Patrick Hügelschäfer", "Patty Hügelschäfer"],
+	["Iwanicki", "Marcel Iwanicki"],
 	["Messer", "Reiner Messer"],
+	["Petersen", "Hein Petersen", "Heinrich Petersen"],
 	["Pfeiffer", "Willi Pfeiffer"],
 	["Sauer", "Bruno Sauer"],
 	["Reinhold", "Manuel Reinhold"],
 	["Schmidt", "Rudolf Schmidt"],
 	["Schupp", "Reinhold Schupp"],
-	["Talin", "Talin ?"],
+	["Talin", "Talin Hoffmann"],
 	["Wenzel", "Donald Wenzel"],
 ]

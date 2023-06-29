@@ -1,0 +1,62 @@
+{{ cat content/html-header.html }}
+{{ python tools/render.py content/navbar.html active=vereinsturniere }}
+{{ python tools/render.py content/header.html }}
+
+<style>
+table.meister-23.confirmations td:nth-child(2) {
+	text-align: center;
+}
+table.meister-23.confirmations td:nth-child(1n+3) {
+	text-align: right;
+}
+table.meister-23.confirmations tr:nth-child(8n) {
+	border-bottom: 3px solid black;
+}
+code {
+	font-family: monospace;
+}
+</style>
+
+<main>
+
+<h1>Pokalturnier 2023</h1>
+
+<p><strong>Download</strong>: <a href="downloads/Ausschreibung-VM+P-2023.pdf">Ausschreibung</a> (PDF).</p>
+
+<h2>Über eine mögliche Einteilung in Gruppen A und B</h2>
+
+<p>Da noch nicht alle zugesagt haben besteht jetz noch die Möglichkeit, uns dafür zu entscheiden, die Spieler in Gruppen einzuteilen. Gruppenmitglieder wären also ungefähr gleich stark und die Gewinnchancen besser.</p>
+
+<p>Um faire Gruppen zu bilden müsste nach einem <strong>virtuellen Rating</strong> sortiert werden, da noch nicht jeder eine DWZ hat. Die anpassung bzw. Ermittlung dieses Ratings sollte möglichst objektiv, auf irgendwelchen Fakten basierend sein.</p>
+
+<p>Der TL entschloss sich zunächst die Wertungszahlen derer, die entweder noch keine offizielle haben, auf <strong><code>1550</code></strong> zu veranschlagen und alle DWZ die kleiner sind auf ebensoviel zu erhöhen. Auf diese Basis-DWZ (echte oder "aufgefüllte") jedes Spielers wurde dann ein Bonus gerechnet, der sich von dessen Turnier-Performanz ableitet. Der Bonus ist <strong><code>10</code></strong> mal die durchschnittlich erzielte Punktezahl. Wenn also jemand an <strong><code>3</code></strong> Turnieren teilgenommen hatte und insgesamt <strong><code>9 + 5 + 7 = 21</code></strong> Punkte erzielte, so wird auf die DWZ ein Bonus von <strong><code>21 / 3 * 10 = 70</code></strong> hinzuaddiert. Die Turnierpunkte sind übrigens <strong>GP</strong> (Grand-Prix) Punkte (10 für solo 1. Platz, 9 für geteilten 1. Platz, danach 8 für alle zweiten Plätze, 7 für alle dritten, usw.), so daß auch die letzten Plätze Punkten konnten.</p>
+
+<p>Es sollte offensichtlich sein dass der TL mit diesem Schema anstrebte, vorallem die Spieler der ersten Mannschaft in der gleichen Gruppe aufeinander treffen zu lassen. Jedoch wenn Spieler ihre Gruppen tauschen wollen, wäre das völlig OK!</p>
+
+<p>Die Graphen unten zeigen pro Spieler zwei Balken. Der erste Balken ist dreigeteilt in: echte DWZ (<strong>schwarz</strong>), auffüll-Bonus (<strong>dunkelgrau</strong>), und Turnier-Bonus (<strong>orange</strong>). Der zweite Balken zeigt in <strong>grün</strong>, wieviele Turniere von den maximalen (11) gespielt wurden.</p>
+
+<h2>Mögliche Gruppeneinteilung</h2>
+<img src="img/meister-prelim-all-1550.png">
+
+<h2>Meldungen</h2>
+<table class="meister-23 confirmations">
+<thead>
+	<tr>
+		<th>Name</th>
+		<th>Zusage</th>
+		<th>DWZ</th>
+		<th>VirtWZ</th>
+	</tr>
+</thead>
+<tbody>
+	{{ python tools/meister.py tables/meister-23-players.csv }}
+</tbody>
+</table>
+
+
+<p>* Beim Gabriel fehlt mir leider noch sein Nachname.</p>
+
+</main>
+
+{{ python tools/render.py content/footer.html }}
+{{ cat content/html-footer.html }}
