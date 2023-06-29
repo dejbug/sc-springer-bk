@@ -5,11 +5,6 @@ from lib.Names import Name, Synonyms, DEFAULT_SYNONYMS
 
 import copy, csv, glob, math, os, sys
 
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import numpy as np
-
-
 EST_PERF_FACTOR = 10
 EST_MIN_RATING = 1550
 BOTTOM_CUTOFF = 1000
@@ -223,6 +218,10 @@ def estimate_ratings(players):
 
 
 def plot1(players):
+	import matplotlib as mpl
+	import matplotlib.pyplot as plt
+	import numpy as np
+
 	players = sorted(players, key = lambda p: max(p.dwz, p.est), reverse = True)
 	fig, ax = plt.subplots(layout="constrained")
 
@@ -240,6 +239,10 @@ def plot1(players):
 
 
 def plot2(players, tournament_count = 0):
+	import matplotlib as mpl
+	import matplotlib.pyplot as plt
+	import numpy as np
+
 	players = sorted(players, key = lambda p: max(p.dwz, p.est), reverse = True)
 	fig, ax = plt.subplots(layout="constrained", figsize=(14,5))
 
