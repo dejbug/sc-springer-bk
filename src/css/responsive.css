@@ -266,6 +266,9 @@ nav .active {
 	text-align: center;
 }
 
+.crosstable td:nth-child(1) {
+}
+
 @media screen and (min-width:480px) {
 	.alert {
 		background-color: steelblue;

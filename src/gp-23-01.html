@@ -46,15 +46,15 @@
 <h2 class="section-title">Beste Turnierergebnisse</h2>
 
 <div class="table-wrapper crosstable nolast">
-#{{ python tools/csv2table.py tables/gp-23-01-single.csv }}
-{{ python tools/gp.py -si tables/gp-23-01.csv }}
+{{ python tools/csv2table.py tables/gp-23-01-single.csv }}
+#{{ python tools/gp.py -si tables/gp-23-01.csv }}
 </div>
 
 <h2 class="section-title">Kumulativ (<small>letzten x Turniere</small>)</h2>
 
 <div class="table-wrapper crosstable nolast">
-#{{ python tools/csv2table.py tables/gp-23-01-cumulative.csv }}
-{{ python tools/gp.py -ci tables/gp-23-01.csv }}
+{{ python tools/csv2table.py tables/gp-23-01-cumulative.csv }}
+#{{ python tools/gp.py -ci tables/gp-23-01.csv }}
 </div>
 
 </article>
