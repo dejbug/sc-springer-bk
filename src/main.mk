@@ -1,4 +1,4 @@
-MISC := VERSION favicon.ico img/ downloads/ default.css
+MISC := favicon.ico img/ downloads/ default.css
 #~ MISC += $(wildcard vendor/rewe/img/*.png)
 MISC := $(MISC:%=dist/%)
 
@@ -8,7 +8,7 @@ VEREINSTURNIERE := $(VEREINSTURNIERE:%=dist/vereinsturniere-%.html)
 HTML := $(wildcard *.html)
 HTML := $(HTML:%=dist/%) $(VEREINSTURNIERE)
 
-all : $(HTML) $(MISC)
+all : $(HTML) $(MISC) dist/VERSION
 
 ifneq ($(VENDOR),0)
 all : dist/vendor/ dist/vendor/*
@@ -17,6 +17,8 @@ endif
 ifneq ($(LEARNING),0)
 all : dist/learning/ dist/learning/*
 endif
+
+dist/VERSION : ../VERSION ; $(call NCOPY,$<,$<)
 
 dist/index.php : tools/index.php ; $(call FCOPY,$<,dist)
 
