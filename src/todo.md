@@ -12,7 +12,7 @@
 [x] Fix the filenames in tables (some blitzes are schnells).
 [ ] Append a legend to tournament tables.
 [ ] Clean up tools. Make the code more readable for others.
-[ ] Add a tool to auto-generate GPs.
+[o] Add a tool to auto-generate GPs.
 	[ ] Ask others whether we could switch to a 6-month GP cycle. To simplify things.
 	[ ] List dependencies for GP.
 [ ] Remove makefile HACKS
