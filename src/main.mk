@@ -1,5 +1,5 @@
 MISC := favicon.ico img/ downloads/ default.css
-#~ MISC += $(wildcard vendor/rewe/img/*.png)
+MISC += $(wildcard vendor/rewe/img/*.png)
 MISC := $(MISC:%=dist/%)
 
 VEREINSTURNIERE := $(shell python tools/vereinsturniere.py --tdir tables --list)
