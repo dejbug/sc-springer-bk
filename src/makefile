@@ -38,3 +38,5 @@ incmaj : ; @echo -n $(shell echo $(MAJOR)+1 | bc).$(MINOR).$(PATCH) > ../VERSION
 incmin : ; @echo -n $(MAJOR).$(shell echo $(MINOR)+1 | bc).$(PATCH) > ../VERSION
 incpat : ; @echo -n $(MAJOR).$(MINOR).$(shell echo $(PATCH)+1 | bc) > ../VERSION
 inc : incpat ; @cat ../VERSION
+
+deploy : ; @../.local/deploy.sh
