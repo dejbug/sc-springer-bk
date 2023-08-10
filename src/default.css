@@ -1,5 +1,8 @@
 #{{ cat css/config.css }}
 {{ cat css/reset.css }}
+
+{{ cat css/uncategorized.css }}
+
 #{{ cat css/grid.css }}
 #{{ cat css/tools.css }}
 {{ cat css/tables.css }}

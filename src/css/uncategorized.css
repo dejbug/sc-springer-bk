@@ -1,0 +1,8 @@
+
+a.temporary {
+/*	text-decoration: underline;*/
+}
+a.temporary::after {
+	content: "*";
+	color: salmon;
+}

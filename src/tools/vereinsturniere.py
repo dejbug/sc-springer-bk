@@ -1,11 +1,11 @@
 import argparse, collections, glob, io, os, re, sys
 
-Path = collections.namedtuple("Path", "root type year month extra_")
+Path = collections.namedtuple("Path", "text root type year month extra_")
 Path.re = re.compile(r"(.*?/)(blitz|schnell|gp)-(\d+)-(\d+)(-.*?)?\.csv")
 Path.gg = classmethod(lambda cls, path: cls.re.match(path).groups())
 Path.tt = [os.path.normpath, str, int, int, lambda x: x]
 Path.aa = classmethod(lambda cls, path: (t(g) for t,g in zip(cls.tt, cls.gg(path))))
-Path.parse = classmethod(lambda cls, path: cls(*cls.aa(path)))
+Path.parse = classmethod(lambda cls, path: cls(path, *cls.aa(path)))
 Path.__lt__ = lambda p, other: p.month < other.month
 Path.extra = property(lambda p: p.extra_ if p.extra_ is not None else "")
 Path.name = property(lambda p: "{0.type}-{0.year:02d}-{0.month:02d}{0.extra}".format(p))
@@ -39,6 +39,8 @@ def parse_args(args=sys.argv[1:]):
 	p.add_argument("--year-from-path")
 	p.add_argument("--ofile")
 	p.add_argument("--list", action="store_true")
+	p.add_argument("--index", action="store_true")
+	p.add_argument("--prefix", default="")
 	aa = p.parse_args(args)
 	if aa.year_from_path:
 		m = re.match(r"(.+?/)?vereinsturniere-(\d+)\.html", aa.year_from_path)
@@ -93,6 +95,104 @@ def write_pokal(file, pokal, year):
 	file.write('<p><a href="%s">Pokalturnier 20%02d</a></p>\n' % (pokal, year))
 	pass
 
+def gather_index_data(aa):
+	YEAR_PAGE_FORMAT = 'vereinsturniere-%d.html'
+
+	data = {}
+
+	for year in find_years(aa):
+		data[year] = { 'name': str(2000 + year if year < 100 else year) }
+		data[year]['page'] = YEAR_PAGE_FORMAT % year
+
+		# FIXME: Add Meisterschaften.
+
+		data[year]['P'] = find_po(aa.pdir, year)
+
+		# Update: There can only be one GP per year!
+		# It was explained to me wrong. I thought that a GP
+		#	is to look for the best 3 out of the most recent 5
+		#	monthly tournaments. Turns out it's for 9 out of 12.
+		# We need to FIXME find_gp().
+
+		grand_prix_pages = find_gp(aa.tdir, year)
+		if grand_prix_pages:
+			data[year]['G'] = grand_prix_pages[0].text
+		else:
+			data[year]['G'] = None
+
+		tournament_pages = find_bs(aa.tdir, year)
+		for i in range(1, 13):
+			# TODO: Do this better.
+			for page in tournament_pages:
+				data[year][i] = None
+				if page.year == year and page.month == i:
+					data[year][i] = page.text
+					break
+
+	# import pprint; pprint.pprint(data)
+	return data
+
+def write_index(aa, file = sys.stdout):
+	data = gather_index_data(aa)
+
+	file.write(f'{aa.prefix}<table id="turniere-table">\n')
+	file.write(f'{aa.prefix}\t<thead>\n')
+	file.write(f'{aa.prefix}\t\t<tr>\n')
+	file.write(f'{aa.prefix}\t\t\t<th></th>\n')
+	# file.write('\t\t\t<th><a href="vereinsturniere-22.html">2022</a></th>\n')
+	# file.write('\t\t\t<th><a href="vereinsturniere-23.html">2023</a></th>\n')
+	for year in sorted(data):
+		datum = data[year]
+		file.write(f'{aa.prefix}\t\t\t<th><a href="{datum["page"]}">{datum["name"]}</a></th>\n')
+	file.write(f'{aa.prefix}\t\t</tr>\n')
+	file.write(f'{aa.prefix}\t</thead>\n')
+
+	# FIXME: Un-hardcode this!
+	file.write(f'{aa.prefix}\t<tbody>\n')
+	file.write(f'{aa.prefix}\t\t<tr>\n')
+	file.write(f'{aa.prefix}\t\t\t<td>M</td>\n')
+	file.write(f'{aa.prefix}\t\t\t<td></td>\n')
+	file.write(f'{aa.prefix}\t\t\t<td><a href="meister-23.html" class="temporary">M</td>\n')
+	file.write(f'{aa.prefix}\t\t</tr>\n')
+	file.write(f'{aa.prefix}\t\t<tr>\n')
+	file.write(f'{aa.prefix}\t\t\t<td>P</td>\n')
+
+	# file.write('\t\t\t<td><a href="pokal-22.html">P</a></td>\n')
+	# file.write('\t\t\t<td></td>\n')
+	for year in sorted(data):
+		datum = data[year]
+		if datum['P']:
+			file.write(f'{aa.prefix}\t\t\t<td><a href="{datum["P"]}">P</a></td>\n')
+		else:
+			file.write(f'{aa.prefix}\t\t\t<td></td>\n')
+	file.write(f'{aa.prefix}\t\t</tr>\n')
+	file.write(f'{aa.prefix}\t\t<tr>\n')
+
+	file.write(f'{aa.prefix}\t\t\t<td>G</td>\n')
+	# file.write('\t\t\t<td><a href="gp-22-08.html">G</a></td>\n')
+	# file.write('\t\t\t<td><a href="gp-23-01.html">G</a></td>\n')
+	for year in sorted(data):
+		datum = data[year]
+		if datum['G']:
+			file.write(f'{aa.prefix}\t\t\t<td><a href="{datum["G"]}">G</a></td>\n')
+		else:
+			file.write(f'{aa.prefix}\t\t\t<td></td>\n')
+	file.write(f'{aa.prefix}\t\t</tr>\n')
+
+	for month in range(1, 13):
+		file.write(f'{aa.prefix}\t\t<tr>\n')
+		file.write(f'{aa.prefix}\t\t\t<td>{month}</td>\n')
+		for year in sorted(data):
+			datum = data[year]
+			if datum[month]:
+				file.write(f'{aa.prefix}\t\t\t<td><a href="{datum["page"]}#{month:02d}">B</a></td>\n')
+			else:
+				file.write(f'{aa.prefix}\t\t\t<td></td>\n')
+		file.write(f'{aa.prefix}\t\t</tr>\n')
+
+	file.write(f'{aa.prefix}\t</tbody>\n')
+	file.write(f'{aa.prefix}</table>\n')
+
 def blah(pp, gg, pokal=None):
 	g = 0
 
@@ -111,19 +211,22 @@ def blah(pp, gg, pokal=None):
 
 	return s.getvalue()
 
-def find_bs(aa):
-	regex = re.compile(r'(blitz|schnell)-(%02d)-(\d+)(-games.*?)?(\.csv)' % aa.year)
-	nn = os.listdir(aa.tdir)
+def find_bs(tdir, year):
+	assert year, "need --year, use --list to get a list of options"
+	regex = re.compile(r'(blitz|schnell)-(%02d)-(\d+)(-games.*?)?(\.csv)' % year)
+	nn = os.listdir(tdir)
 	nn = (regex.match(n) for n in nn)
-	nn = (os.path.join(aa.tdir, n.group(0)) for n in nn if n)
+	nn = (os.path.join(tdir, n.group(0)) for n in nn if n)
 	return sorted(Path.parse(n) for n in nn)
 
-def find_gp(aa):
-	nn = glob.glob(os.path.join(aa.tdir, "gp-%02d-??.csv" % aa.year))
+def find_gp(tdir, year):
+	assert year, "need --year, use --list to get a list of options"
+	nn = glob.glob(os.path.join(tdir, "gp-%02d-??.csv" % year))
 	return sorted(Path.parse(n) for n in nn)
 
-def find_po(aa):
-	nn = glob.glob(os.path.join(aa.pdir, "pokal-%02d.html" % aa.year))
+def find_po(pdir, year):
+	assert year, "need --year, use --list to get a list of options"
+	nn = glob.glob(os.path.join(pdir, "pokal-%02d.html" % year))
 	return os.path.normpath(nn[0]) if nn else None
 
 def find_years(aa):
@@ -139,31 +242,35 @@ def find_years(aa):
 
 if __name__ == "__main__":
 	parser, aa = parse_args()
-	#~ print(aa)
+	# print(aa)
 
 	if aa.list:
 		if aa.year:
 			pp = []
-			pp.extend(p.path + ".csv" for p in find_bs(aa))
-			pp.extend(p.path + ".csv" for p in find_gp(aa))
-			po = find_po(aa)
+			pp.extend(p.path + ".csv" for p in find_bs(aa.tdir, aa.year))
+			pp.extend(p.path + ".csv" for p in find_gp(aa.tdir, aa.year))
+			po = find_po(aa.pdir, aa.year)
 			if po: pp.append(po)
-			print(pp)
+			print('\n'.join(pp))
 		else:
 			print(" ".join(map(str, find_years(aa))))
 		exit()
 
-	pp = find_bs(aa)
+	if aa.index:
+		write_index(aa)
+		exit()
+
+	pp = find_bs(aa.tdir, aa.year)
 	#~ for p in pp: print(p, p.path)
 
-	gg = find_gp(aa)
+	gg = find_gp(aa.tdir, aa.year)
 	#~ for p in gg: print(p, p.path)
 
-	po = find_po(aa)
+	po = find_po(aa.pdir, aa.year)
 	#~ print(po)
 
 	out = template % (aa.year, blah(pp, gg, po))
-	
+
 	if not aa.ofile:
 		print(out)
 	else:
