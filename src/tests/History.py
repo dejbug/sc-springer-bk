@@ -7,7 +7,7 @@
 
 import init
 
-import gp
+from tools import gp
 
 from lib.tool import ftos
 from lib.History import History

@@ -15,11 +15,20 @@ filePaths = CsvTablePath.fromIndexFile(indexFilePath)
 filePaths = [p.path for p in filePaths]
 names, synonyms = gp.load_names_from_files(filePaths)
 
-#~ for nn in synonyms.synonyms:
-	#~ for n in nn:
-		#~ print(n.text, end=", ")
-	#~ print()
+if 0:
+	for nn in synonyms.synonyms:
+		for n in nn:
+			print(n.text, end=", ")
+			print()
 
-#~ for n in names: print(n)
+	for n in names: print(n)
 
 his = History(names, synonyms, contiguous = False)
+# print(dir(his))
+
+for player in his.players:
+	playerAliases = [name.text for name in player.names]
+	print(player.name, playerAliases)
+	for score in player.scores:
+		print(score.pscore, score.rscore, score.rank, sep=' | ')
+	print()

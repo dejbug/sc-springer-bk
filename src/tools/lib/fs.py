@@ -4,6 +4,8 @@ import __main__
 
 Signature = collections.namedtuple("Signature", "type format istabbed istournament hasmatches hascolors hasrounds needscooking")
 
+builtin_type = type
+
 def root(top, __file=__main__.__file__):
 	"""
 	>>> root("user", __file="/home/user/folder/subfolder/script.py")
@@ -32,9 +34,42 @@ def list(top, rel=None, __file=__main__.__file__):
 		for n in nn:
 			yield os.path.join(t, n)
 
-def lines(fp):
-	with open(fp, "r", encoding="utf8") as file:
+def lines(fp, encoding="utf8"):
+	with open(fp, "r", encoding=encoding) as file:
 		return [line.strip() for line in file]
+
+class Ptype:
+
+	def __init__(self, text, root, type, year, month, extra):
+		self.text = os.path.normpath(text)
+		self.root = str(root or "")
+		self.type = str(type or "")
+		self.year = int(year or 0)
+		self.month = int(month or 0)
+		self.extra = str(extra or "")
+
+	def __lt__(self, other):
+		if self.year != other.year:
+			return self.year < other.year
+		if self.month != other.month:
+			return self.month < other.month
+		if self.type != other.type:
+			return self.type < other.type
+		if self.extra != other.extra:
+			return self.extra < other.extra
+		return self.text < other.text
+
+	def __str__(self):
+		return builtin_type(self).__name__ + str(self.__dict__)
+
+def ptype(fp):
+	m = re.match(r"(.*?/)(blitz|schnell|gp|meister)-(\d+)(?:-(\d+))?(-.*?)?\.csv", fp)
+	if m:
+		return Ptype(m.group(0), *m.groups())
+
+def ftype(fp, encoding="utf8"):
+	with open(fp, "r", encoding=encoding) as file:
+		return type(file.readline())
 
 def type(text):
 	"""
