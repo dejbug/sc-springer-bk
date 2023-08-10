@@ -107,6 +107,7 @@ def gather_index_data(aa):
 		# FIXME: Add Meisterschaften.
 
 		data[year]['P'] = find_po(aa.pdir, year)
+		data[year]['M'] = find_me(aa.pdir, year)
 
 		# Update: There can only be one GP per year!
 		# It was explained to me wrong. I thought that a GP
@@ -116,7 +117,8 @@ def gather_index_data(aa):
 
 		grand_prix_pages = find_gp(aa.tdir, year)
 		if grand_prix_pages:
-			data[year]['G'] = grand_prix_pages[0].text
+			gp = grand_prix_pages[0]
+			data[year]['G'] = '{0.type}-{0.year}-{0.month:02d}.html'.format(gp)
 		else:
 			data[year]['G'] = None
 
@@ -126,7 +128,7 @@ def gather_index_data(aa):
 			for page in tournament_pages:
 				data[year][i] = None
 				if page.year == year and page.month == i:
-					data[year][i] = page.text
+					data[year][i] = page
 					break
 
 	# import pprint; pprint.pprint(data)
@@ -146,17 +148,22 @@ def write_index(aa, file = sys.stdout):
 		file.write(f'{aa.prefix}\t\t\t<th><a href="{datum["page"]}">{datum["name"]}</a></th>\n')
 	file.write(f'{aa.prefix}\t\t</tr>\n')
 	file.write(f'{aa.prefix}\t</thead>\n')
-
-	# FIXME: Un-hardcode this!
 	file.write(f'{aa.prefix}\t<tbody>\n')
+
 	file.write(f'{aa.prefix}\t\t<tr>\n')
 	file.write(f'{aa.prefix}\t\t\t<td>M</td>\n')
-	file.write(f'{aa.prefix}\t\t\t<td></td>\n')
-	file.write(f'{aa.prefix}\t\t\t<td><a href="meister-23.html" class="temporary">M</td>\n')
+	# file.write(f'{aa.prefix}\t\t\t<td></td>\n')
+	# file.write(f'{aa.prefix}\t\t\t<td><a href="meister-23.html" class="temporary">M</td>\n')
+	for year in sorted(data):
+		datum = data[year]
+		if datum['M']:
+			file.write(f'{aa.prefix}\t\t\t<td><a href="{datum["M"]}">M</a></td>\n')
+		else:
+			file.write(f'{aa.prefix}\t\t\t<td></td>\n')
 	file.write(f'{aa.prefix}\t\t</tr>\n')
+
 	file.write(f'{aa.prefix}\t\t<tr>\n')
 	file.write(f'{aa.prefix}\t\t\t<td>P</td>\n')
-
 	# file.write('\t\t\t<td><a href="pokal-22.html">P</a></td>\n')
 	# file.write('\t\t\t<td></td>\n')
 	for year in sorted(data):
@@ -185,7 +192,8 @@ def write_index(aa, file = sys.stdout):
 		for year in sorted(data):
 			datum = data[year]
 			if datum[month]:
-				file.write(f'{aa.prefix}\t\t\t<td><a href="{datum["page"]}#{month:02d}">B</a></td>\n')
+				T = datum[month].type[0].upper()
+				file.write(f'{aa.prefix}\t\t\t<td><a href="{datum["page"]}#{month:02d}">{T}</a></td>\n')
 			else:
 				file.write(f'{aa.prefix}\t\t\t<td></td>\n')
 		file.write(f'{aa.prefix}\t\t</tr>\n')
@@ -227,6 +235,11 @@ def find_gp(tdir, year):
 def find_po(pdir, year):
 	assert year, "need --year, use --list to get a list of options"
 	nn = glob.glob(os.path.join(pdir, "pokal-%02d.html" % year))
+	return os.path.normpath(nn[0]) if nn else None
+
+def find_me(pdir, year):
+	assert year, "need --year, use --list to get a list of options"
+	nn = glob.glob(os.path.join(pdir, "meister-%02d.html" % year))
 	return os.path.normpath(nn[0]) if nn else None
 
 def find_years(aa):
