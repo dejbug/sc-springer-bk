@@ -7,13 +7,41 @@ a.temporary::after {
 	color: salmon;
 }
 
+
 code {
 	font-family: monospace;
 }
+
 
 .fullhead {
 	background-color: #eee;
 	text-align: center;
 	padding: .3em;
 	font-family: sans;
+}
+
+
+.newspaper {
+	font-family: serif;
+	text-align: justify;
+}
+.newspaper:after {
+	content: ' ';
+	display: block;
+	clear: both;
+}
+.newspaper img {
+	width: 25%;
+	float: right;
+	margin: 0 1em;
+}
+.newspaper h4 {
+	font-family: sans;
+	font-size: 2rem;
+	margin: 0;
+}
+.newspaper h5 {
+	font-family: sans;
+	font-size: 1.3rem;
+	margin: 0;
 }
