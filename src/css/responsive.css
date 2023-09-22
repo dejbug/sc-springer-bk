@@ -300,6 +300,17 @@ nav .active {
 }
 
 @media screen and (min-width:768px) {
+	.row {
+		display: grid;
+		gap: 1em;
+		grid-template-columns: 1fr 1fr;
+	}
+	.row.auto-1 {
+		grid-template-columns: auto 1fr;
+	}
+	.row.auto-2 {
+		grid-template-columns: 1fr auto;
+	}
 	.cols-2 {
 		column-count: 2;
 	}
