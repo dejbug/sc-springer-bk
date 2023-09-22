@@ -2,28 +2,31 @@
 {{ python tools/render.py content/navbar.html active=vereinsturniere }}
 {{ python tools/render.py content/header.html }}
 
-<style>
-table.meister-23.confirmations td:nth-child(2) {
-	text-align: center;
-}
-table.meister-23.confirmations td:nth-child(1n+3) {
-	text-align: right;
-}
-table.meister-23.confirmations tr:nth-child(8n) {
-	border-bottom: 3px solid black;
-}
-code {
-	font-family: monospace;
-}
-</style>
-
 <main>
 
 <h1>Vereinsmeisterschaft 2023</h1>
 
-<p><strong>Download</strong>: <a href="downloads/Ausschreibung-VM+P-2023.pdf">Ausschreibung</a> (PDF).</p>
+<h2 class="fullhead">2. Runde (29. Sep)</h2>
+<div class="table-wrapper table narrow right-1 left-2 center-3 mono-3">
+{{ python tools/csv2table.py tables/meister-23-r2.csv }}
+</div>
 
-<h2>Über eine mögliche Einteilung in Gruppen A und B</h2>
+<h2 class="fullhead">1. Runde (25. Aug)</h2>
+<div class="table-wrapper table narrow right-1 left-2 center-3 mono-3">
+{{ python tools/csv2table.py tables/meister-23-r1.csv }}
+</div>
+
+<h2 class="fullhead">Download</h2>
+
+<p>Hier erstmal die <a href="downloads/Ausschreibung-M-2023.pdf">Ausschreibung</a> (PDF).</p>
+
+<h2 class="fullhead">Wertungszahlen</h2>
+
+<p>Um die Sache möglichst einfach zu halten wird ein normales Schweizer Turnier gespielt. Die virtuellen Wertungszahlen wurden zwecks Ranking jedoch beibehalten. Die Gruppeneinteilung ist daher, mehr oder weniger, implizit gegeben.</p>
+
+<p>Die Folgende Diskussion kann daher ignoriert werden.</p>
+
+<h2 class="fullhead">Über eine mögliche Einteilung in Gruppen A und B</h2>
 
 <p>Da noch nicht alle zugesagt haben, besteht jetz noch die Möglichkeit, uns dafür zu entscheiden, den Wettkampf in Gruppen abzuwickeln. Gruppenmitglieder wären also ungefähr gleich stark und die Gewinnchancen besser. Falls wir in diese Richtung gehen würden, müssten wir freilich für das spannende Finale der Gruppensieger noch einen Spieltag dranhängen.</p>
 
@@ -39,7 +42,7 @@ code {
 <img src="img/meister-prelim-all-1550.png">
 
 <h2>Meldungen</h2>
-<table class="meister-23 confirmations">
+<table class="meister confirmations">
 <thead>
 	<tr>
 		<th>Name</th>

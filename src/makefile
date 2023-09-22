@@ -13,7 +13,7 @@ NCOPY = $(MKDIR) dist/$(dir $2) && cp -t dist/ $1
 FCOPY = $(MKDIR) dist/$(dir $2) && cp -t dist/$(dir $2) $1
 DCOPY = $(MKDIR) dist/$2 && cp -t dist/ -r $1
 
-SERVE := php -S 0.0.0.0:8000
+SERVE := php -S 0.0.0.0:8002
 RENDER := python tools/render.py
 
 include main.mk

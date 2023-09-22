@@ -130,7 +130,8 @@ def load_tournament_files():
 	nn = glob.glob(root + "tables/[sb]*[e0-9].csv")
 	#~ print(len(nn), nn)
 
-	ff = [File(n) for n in nn]
+	ff = (File(n) for n in nn)
+	ff = [f for f in ff if f.type]
 
 	names = []
 	for f in ff:

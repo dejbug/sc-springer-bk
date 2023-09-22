@@ -1,4 +1,7 @@
 /************* TOOLS */
+body {
+	padding: .5rem;
+}
 
 a {
 	color: steelblue;
@@ -365,9 +368,6 @@ nav .active {
 }
 
 @media screen and (min-width:1200px) {
-	body {
-		padding: .5rem;
-	}
 	#turniere-table {
 		font-size: calc(100svw / 20);
 	}

@@ -6,3 +6,14 @@ a.temporary::after {
 	content: "*";
 	color: salmon;
 }
+
+code {
+	font-family: monospace;
+}
+
+.fullhead {
+	background-color: #eee;
+	text-align: center;
+	padding: .3em;
+	font-family: sans;
+}
