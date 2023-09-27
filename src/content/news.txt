@@ -1,6 +1,8 @@
+24.9.23
+Auch <a href="saison-23.html#r2">in der zweiten Runde</a> siegte die Jugend!
 
 10.9.23
-Unsere Jugendmannschaft hat ihre allererste Turnierrunde gewonnen! <img src="img/spielbericht-23-09-10.png">
+Unsere Jugendmannschaft hat ihre <a href="saison-23.html#r1">allererste Turnierrunde</a> gewonnen! <img src="img/spielbericht-23-09-10.png">
 
 9.9.23
 Die letzten beiden Partien der 1. VM Runde wurden gestern Abend ausgespielt. Hier sind <a href="meister-23.html">die Ergebnisse</a>.
