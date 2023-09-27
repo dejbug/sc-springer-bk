@@ -74,6 +74,10 @@ th, td {
 	color: #ed889c;
 }
 
+.table.wrapped {
+	overflow: auto;
+}
+
 .table.indexed th:nth-child(1) {
 	min-width: 2em;
 	text-align: center;
@@ -114,6 +118,9 @@ th, td {
 	font-family: mono;
 }
 
+.table.centered table {
+	margin: 0 auto;
+}
 
 .meister.confirmations td:nth-child(2) {
 	text-align: center;
