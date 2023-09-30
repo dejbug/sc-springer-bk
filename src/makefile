@@ -1,7 +1,8 @@
-.PHONY : all clean serve run ls inc incpat incmaj incmin
+.PHONY : all clean reset serve run ls inc incpat incmaj incmin
 
 VENDOR := 0
 LEARNING := 0
+REWE := 1
 
 MAJOR := $(shell cut -d. -f1 ../VERSION)
 MINOR := $(shell cut -d. -f2 ../VERSION)
@@ -17,6 +18,7 @@ SERVE := php -S 0.0.0.0:8002
 RENDER := python tools/render.py
 
 include main.mk
+include deps.mk
 
 dist/%.html : %.html | dist ; $(RENDER) -o dist/$< $<
 dist/%.css : %.css | dist ; $(RENDER) -o dist/$< $<
@@ -27,7 +29,8 @@ dist/%/ : % | dist ; $(call DCOPY,$<,$<)
 dist : ; $(MKDIR) dist/
 build : ; $(MKDIR) build/
 
-clean : ; $(RMDIR) dist/ build/
+clean : ; $(RMDIR) build/
+reset : | clean ; $(RMDIR) dist/
 
 serve : all ; cd dist && rm -f index.php && $(SERVE)
 run : all dist/index.php ; cd dist && $(SERVE)

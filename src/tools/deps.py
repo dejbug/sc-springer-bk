@@ -1,54 +1,75 @@
 import sys, os, re
 import argparse
 
-REGEX = re.compile(r'\{\{.*?\s+((?:tables|content|css)/\S+)', re.S)
+DIR_DIST = 'dist'
+DIR_BUILD = 'build'
 
-def iterDeps(path, strict = True):
-	with open(path) as file:
-		for m in REGEX.finditer(file.read()):
+RE_BLOCK1 = re.compile(r'[{][{]\s*(.+?)\s*[}][}]|(?:href|src)="(.+?)"', re.S)
+RE_BLOCK2 = re.compile(r'[{][{]\s*(.+?)\s*[}][}]', re.S)
+RE_DEPS1 = re.compile(r'((?:tables|content|css|tools|img)/\S+)', re.S)
+RE_DEPS2 = re.compile(r'((?:tables|content|css|tools)/\S+)', re.S)
+
+def iterBlocks(aa):
+	RE_BLOCK = RE_BLOCK1 if aa.all else RE_BLOCK2
+	with open(aa.src) as file:
+		for m in RE_BLOCK.finditer(file.read()):
+			yield m.group(1) or m.group(2)
+
+def findDeps(aa):
+	pp = set()
+	RE_DEPS = RE_DEPS1 if aa.all else RE_DEPS2
+	with open(aa.src) as file:
+		text = file.read()
+	for block in iterBlocks(aa):
+		for m in RE_DEPS.finditer(block):
 			p = m.group(1)
-			if not strict or os.path.isfile(p):
-				yield p
+			if not aa.strict or os.path.isfile(p):
+				pp.add(p)
+	return sorted(pp)
+
+def preprocessNames(aa):
+	if aa.tname is None and aa.auto_tname:
+		aa.tname = os.path.join(DIR_DIST, aa.src)
+	if aa.dname is None and aa.auto_dname:
+		if aa.dst:
+			aa.dname = aa.dst
+		else:
+			aa.dname = os.path.join(DIR_BUILD, aa.src)
+			if aa.replace_ext:
+				aa.dname = os.path.splitext(aa.dname)[0]
+			aa.dname += '.d'
 
 def parseArgs(args = sys.argv[1:]):
 	p = argparse.ArgumentParser()
 	p.add_argument('src', help='source file')
 	p.add_argument('-o', '--dst', help='destination file')
-	p.add_argument('-t', '--tname', nargs='?', const='', help='rule target file')
-	p.add_argument('-d', '--dname', nargs='?', const='', help='associate with .d file')
+
+	p.add_argument('-t', '--tname', help='rule target')
+	p.add_argument('-d', '--dname', help='rule target .d file')
+	p.add_argument('-T', '--auto-tname', action='store_true', help='rule target (derived from src)')
+	p.add_argument('-D', '--auto-dname', action='store_true', help='rule target .d file (derived from src)')
+
+	p.add_argument('-a', '--all', action='store_true', help='print all deps')
 	p.add_argument('-m', '--multiline', action='store_true', help='print line-breaks')
 	p.add_argument('-s', '--strict', action='store_true', help='list only extant deps')
 	p.add_argument('-r', '--replace-ext', action='store_true', help='replace extension rather than append')
-	return p, p.parse_args(args)
 
-def makeNames(aa):
-	tname, dname = None, None
-	if aa.tname is not None:
-		tname = aa.tname or aa.src
-		if aa.dname is not None:
-			if aa.dname:
-				dname = aa.dname
-			elif aa.dst:
-				dname = aa.dst
-			else:
-				if aa.replace_ext:
-					dname = os.path.splitext(tname)[0] + '.d'
-				else:
-					dname = tname + '.d'
-	return tname, dname
+	aa = p.parse_args(args)
+	preprocessNames(aa)
+
+	return p, aa
 
 def printDeps(aa, file = sys.stdout):
-	deps = list(iterDeps(aa.src, strict = aa.strict))
+	deps = findDeps(aa)
 	if not deps: return
-	tname, dname = makeNames(aa)
-	if tname is None:
+	if aa.tname is None:
 		for dep in deps:
 			file.write(f'{dep}')
 			file.write('\n' if aa.multiline else ' ')
 	else:
-		file.write(tname)
-		if dname is not None:
-			file.write(f' {dname}')
+		file.write(aa.tname)
+		if aa.dname is not None:
+			file.write(f' {aa.dname}')
 		if aa.multiline:
 			file.write(f' :\\\n')
 		else:
@@ -65,10 +86,12 @@ def printDeps(aa, file = sys.stdout):
 
 def main(argv):
 	parser, aa = parseArgs(argv[1:])
-	# if aa.dst:
-	# 	with open(aa.dst, 'w') as file:
-	# 		printDeps(aa, file = file)
-	printDeps(aa)
+	# print(aa)
+	if aa.dst:
+		with open(aa.dst, 'w') as file:
+			printDeps(aa, file = file)
+	else:
+		printDeps(aa)
 
 if __name__ == '__main__':
 	sys.exit(main(sys.argv))
