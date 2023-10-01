@@ -42,67 +42,74 @@ E_GET_MK_RESULTATE = 'MKResultate/GetMKResultate'
 def ApiUrl(endpoint, **kk):
 	return API_ROOT + endpoint + '?' + urllib.parse.urlencode(kk)
 
-def ApiCall(endpoint, cache = None, **kk):
+def ApiCall(endpoint, cache = None, force = False, offline = False, **kk):
 	url = ApiUrl(endpoint, **kk)
-	text = fetch(url, cache = cache)
+	text = fetch(url, cache = cache, force = force, offline = offline)
 	return json.loads(text)
 
 
 def ApiGetTurniereUrl():
+	'''
+	>>> ApiGetTurniereUrl()
+	'https://www.schach-in-starkenburg.de/webservice/api/Turniere/GetTurniere'
+	'''
 	return API_ROOT + E_GET_TURNIERE
 
-def ApiGetTurniere(cache = None):
-	return ApiCall(E_GET_TURNIERE, cache)
+def ApiGetTurniere(cache = None, force = False, offline = False):
+	return ApiCall(E_GET_TURNIERE, cache, force, offline)
 
 
 def ApiGetSpielklassenUrl():
+	'''
+	>>> ApiGetSpielklassenUrl()
+	'https://www.schach-in-starkenburg.de/webservice/api/Vereine/GetSpielklassen'
+	'''
 	return API_ROOT + E_GET_SPIELKLASSEN
 
-def ApiGetSpielklassen(cache = None):
-	return ApiCall(E_GET_SPIELKLASSEN, cache)
+def ApiGetSpielklassen(cache = None, force = False, offline = False):
+	return ApiCall(E_GET_SPIELKLASSEN, cache, force, offline)
 
 
 def ApiGetSpieltageByTurnierSpielklasseUrl(turnierId, klassenId):
+	'''
+	>>> ApiGetSpieltageByTurnierSpielklasseUrl(T_2023, K_STARKENBURG)
+	'https://www.schach-in-starkenburg.de/webservice/api/Spieltage/GetSpieltageByTurnierSpielklasse?turnierid=16&spielklassenid=5'
+	'''
 	return ApiUrl(E_GET_SPIELTAGE_BY_TURNIER_SPIELKLASSE,
 		turnierid=turnierId, spielklassenid=klassenId)
 
-def ApiGetSpieltageByTurnierSpielklasse(turnierId, klassenId, cache = None):
-	return ApiCall(E_GET_SPIELTAGE_BY_TURNIER_SPIELKLASSE, cache,
+def ApiGetSpieltageByTurnierSpielklasse(turnierId, klassenId,
+		cache = None, force = False, offline = False):
+	return ApiCall(E_GET_SPIELTAGE_BY_TURNIER_SPIELKLASSE, cache, force, offline,
 		turnierid=turnierId, spielklassenid=klassenId)
 
 
 def ApiGetMKTabellenUrl(turnierId, klassenId, runde):
+	'''
+	>>> ApiGetMKTabellenUrl(T_2023, K_B, 2)
+	'https://www.schach-in-starkenburg.de/webservice/api/MKTabellen/GetMKTabellen?turnierid=16&spielklassenid=8&runde=2'
+	'''
 	return ApiUrl(E_GET_MK_TABELLEN,
 		turnierid=turnierId, spielklassenid=klassenId, runde=runde)
 
-def ApiGetMKTabellen(turnierId, klassenId, runde, cache = None):
-	return ApiCall(E_GET_MK_TABELLEN, cache,
+def ApiGetMKTabellen(turnierId, klassenId, runde,
+		cache = None, force = False, offline = False):
+	return ApiCall(E_GET_MK_TABELLEN, cache, force, offline,
 		turnierid=turnierId, spielklassenid=klassenId, runde=runde)
 
 
 def ApiGetMKResultateUrl(turnierId, klassenId, runde):
+	'''
+	>>> ApiGetMKResultateUrl(T_2023, K_C, 2)
+	'https://www.schach-in-starkenburg.de/webservice/api/MKResultate/GetMKResultate?turnierid=16&spielklassenid=9&runde=2'
+	'''
 	return ApiUrl(E_GET_MK_RESULTATE,
 		turnierid=turnierId, spielklassenid=klassenId, runde=runde)
 
-def ApiGetMKResultate(turnierId, klassenId, runde, cache = None):
-	return ApiCall(E_GET_MK_RESULTATE, cache,
+def ApiGetMKResultate(turnierId, klassenId, runde,
+		cache = None, force = False, offline = False):
+	return ApiCall(E_GET_MK_RESULTATE, cache, force, offline,
 		turnierid=turnierId, spielklassenid=klassenId, runde=runde)
-
-
-def tests_1():
-	'''
-	>>> ApiGetSpieltageByTurnierSpielklasseUrl(T_2023, K_STARKENBURG)
-	'https://www.schach-in-starkenburg.de/webservice/api/Spieltage/GetSpieltageByTurnierSpielklasse?turnierid=16&spielklassenid=5'
-	>>> ApiGetMKTabellenUrl(T_2023, K_B, 2)
-	'https://www.schach-in-starkenburg.de/webservice/api/MKTabellen/GetMKTabellen?turnierid=16&spielklassenid=8&runde=2'
-	>>> ApiGetMKResultateUrl(T_2023, K_C, 2)
-	'https://www.schach-in-starkenburg.de/webservice/api/MKResultate/GetMKResultate?turnierid=16&spielklassenid=9&runde=2'
-	>>> ApiGetTurniereUrl()
-	'https://www.schach-in-starkenburg.de/webservice/api/Turniere/GetTurniere'
-	>>> ApiGetSpielklassenUrl()
-	'https://www.schach-in-starkenburg.de/webservice/api/Vereine/GetSpielklassen'
-	'''
-	pass
 
 def tests_2():
 	from dejlib import RequestCache
@@ -153,94 +160,137 @@ class Spieltag:
 		return obj
 
 
-class Group:
+# class Group:
 
-	def __init__(self, kk, cache = None):
-		self.kk = list(kk)
-		self.dd = {}
-		self.cache = cache
+# 	def __init__(self, kk, cache = None):
+# 		self.kk = list(kk)
+# 		self.dd = {}
+# 		self.cache = cache
 
-	def getDays(self, turnierId = T_2023):
-		if not self.dd:
-			for k in self.kk:
-				dd = ApiGetSpieltageByTurnierSpielklasse(turnierId, k, self.cache)
-				dd = (Spieltag.fromApiResponse(d) for d in dd)
-				self.dd[k] = sorted(dd)
-		return self.dd
+# 	def getDays(self, turnierId = T_2023):
+# 		if not self.dd:
+# 			for k in self.kk:
+# 				dd = ApiGetSpieltageByTurnierSpielklasse(turnierId, k, self.cache)
+# 				dd = (Spieltag.fromApiResponse(d) for d in dd)
+# 				self.dd[k] = sorted(dd)
+# 		return self.dd
 
+def doUsage(parser, aa):
+	parser.print_usage()
+
+def doKlassen(parser, aa):
+	cache = RequestCache(root = aa.cache)
+	for x in ApiGetSpielklassen(cache = cache,
+			force = aa.force, offline = aa.offline):
+		print('%2d' % x['id'], x['klassenname'])
+
+def doTurniere(parser, aa):
+	cache = RequestCache(root = aa.cache)
+	for x in ApiGetTurniere(cache = cache,
+			force = aa.force, offline = aa.offline):
+		start = parseDate(x['startdatum'])
+		tid = getTidFromStartYear(start.year)
+		print('%3d' % tid, end = '  ')
+		print(start.strftime('%x'), end = ' - ')
+		print(parseDate(x['enddatum']).strftime('%x'), end = '   ')
+		print(parseKurzBez(x['kurzbezeichnung']), f' ({x["turniername"]})')
+
+def doSpieltage(parser, aa):
+	cache = RequestCache(root = aa.cache)
+	# group = Group([K_STARKENBURG, K_B, K_C], cache)
+	# ddd = group.getDays()
+	# for k, dd in ddd.items():
+	# 	print('Klasse', k)
+	# 	for d in dd:
+	# 		date = datetime.datetime(year = d.year, month = d.month, day = d.day)
+	# 		print('Runde', d.id, date.strftime('%x'))
+	# 	print()
+	ss = ApiGetSpieltageByTurnierSpielklasse(aa.turnier, aa.klasse, cache,
+			force = aa.force, offline = aa.offline)
+	ss = (Spieltag.fromApiResponse(s) for s in ss)
+	ss = sorted(ss)
+	print('Klasse', aa.klasse)
+	for s in ss:
+		date = datetime.datetime(year = s.year, month = s.month, day = s.day)
+		print('Runde', s.id, date.strftime('%x'))
+	print()
+
+def doResultate(parser, aa):
+	cache = RequestCache(root = aa.cache)
+	for x in ApiGetMKResultate(aa.turnier, aa.klasse, aa.runde,
+			cache = cache, force = aa.force, offline = aa.offline):
+		print(x)
+
+def doTabellen(parser, aa):
+	cache = RequestCache(root = aa.cache)
+	for x in ApiGetMKTabellen(aa.turnier, aa.klasse, aa.runde,
+			cache = cache, force = aa.force, offline = aa.offline):
+		print(x)
 
 def parseArgs(args = sys.argv[1:]):
 	parser = argparse.ArgumentParser()
-	parser.set_defaults(cmd = 'main')
+	parser.set_defaults(cmd = doUsage)
 	parser.add_argument('-o', '--offline', action = 'store_true')
-	parser.add_argument('-f', '--force-fetch', action = 'store_true')
+	parser.add_argument('-f', '--force', action = 'store_true')
 	parser.add_argument('-c', '--cache', default='../.local/cache', help = 'alternate cache path')
 	s = parser.add_subparsers()
 
-	p = s.add_parser('klassen')
-	p.set_defaults(cmd = 'klassen')
+	# p = s.add_parser('klassen')
+	p = s.add_parser('kk')
+	p.set_defaults(cmd = doKlassen)
 
-	p = s.add_parser('turniere')
-	p.set_defaults(cmd = 'turniere')
+	# p = s.add_parser('turniere')
+	p = s.add_parser('tt')
+	p.set_defaults(cmd = doTurniere)
 
-	p = s.add_parser('spieltage')
-	p.set_defaults(cmd = 'spieltage')
+	# p = s.add_parser('spieltage')
+	p = s.add_parser('ss')
+	p.set_defaults(cmd = doSpieltage)
+	p.add_argument('turnier', type = int)
+	p.add_argument('klasse', type = int)
 
-	p = s.add_parser('resultate')
-	p.set_defaults(cmd = 'resultate')
+	# p = s.add_parser('resultate')
+	p = s.add_parser('r')
+	p.set_defaults(cmd = doResultate)
 	p.add_argument('turnier', type = int)
 	p.add_argument('klasse', type = int)
 	p.add_argument('runde', type = int)
 
-	p = s.add_parser('tabellen')
-	p.set_defaults(cmd = 'tabellen')
+	# p = s.add_parser('tabellen')
+	p = s.add_parser('t')
+	p.set_defaults(cmd = doTabellen)
 	p.add_argument('turnier', type = int)
 	p.add_argument('klasse', type = int)
 	p.add_argument('runde', type = int)
 
-	aa = parser.parse_args(args)
-	print(aa)
-	return parser, aa
+	return parser, parser.parse_args(args)
 
 def parseDate(text):
+	'''
+	>>> parseDate('2023-10-01T03:39:47')
+	datetime.datetime(2023, 10, 1, 3, 39, 47)
+	'''
 	return datetime.datetime.strptime(text, '%Y-%m-%dT%H:%M:%S')
 
-def parseKurzBez(text):
+def parseKurzBez(text, form = '%-3s %s'):
+	'''
+	>>> parseKurzBez('MM 2013/2014')
+	'MM  2013'
+	>>> parseKurzBez('HSV 2014/15')
+	'HSV 2014'
+	'''
 	m = re.match(r'(.+?) +(\d+)/(\d+)', text)
 	s, b, e = m.groups()
 	if len(b) < 4: b = '20' + b
 	# if len(e) < 4: e = str(int(b) + 1)
 	# return f'{s:>3} {b}/{e}'
-	return f'{s:>3} {b}'
+	return form % (s, b)
 
 def getTidFromStartYear(year):
 	return year - 2007
 
 if __name__ == '__main__':
 	parser, aa = parseArgs()
-	cache = RequestCache(root = aa.cache)
-	group = Group([K_STARKENBURG, K_B, K_C], cache)
-	if aa.cmd == 'klassen':
-		for x in ApiGetSpielklassen(cache = cache):
-			print('%2d' % x['id'], x['klassenname'])
-	elif aa.cmd == 'turniere':
-		for x in ApiGetTurniere(cache = cache):
-			start = parseDate(x['startdatum'])
-			tid = getTidFromStartYear(start.year)
-			print('%3d' % tid, end = '  ')
-			print(start.strftime('%x'), end = ' - ')
-			print(parseDate(x['enddatum']).strftime('%x'), end = '   ')
-			print(parseKurzBez(x['kurzbezeichnung']), f' ({x["turniername"]})')
-	elif aa.cmd == 'spieltage':
-		ddd = group.getDays()
-		for k, dd in ddd.items():
-			print('Klasse', k)
-			for d in dd:
-				print('Runde', d.id, datetime.datetime(year = d.year, month = d.month, day = d.day).strftime('%x'))
-			print()
-	elif aa.cmd == 'resultate':
-		for x in ApiGetMKResultate(aa.turnier, aa.klasse, aa.runde, cache = cache):
-			print(x)
-	elif aa.cmd == 'tabellen':
-		for x in ApiGetMKTabellen(aa.turnier, aa.klasse, aa.runde, cache = cache):
-			print(x)
+	# print(aa)
+	if aa.cmd:
+		aa.cmd(parser, aa)
