@@ -43,6 +43,9 @@ class History:
 		self.contiguous = contiguous
 		self.load(names, synonyms)
 
+	# def __iter__(self):
+	# 	return (p for p in self.players)
+
 	def load(self, names, synonyms):
 		self.players = []
 		groups = synonyms.groups(names)

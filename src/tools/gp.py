@@ -336,7 +336,6 @@ def print_cumulative_tournament_results_csv(history, file=sys.stdout):
 				file.write(", " + score_to_string(score, sizes["max_total_ilength"], sizes["max_total_flength"]))
 		file.write("\n")
 
-
 def print_best_tournament_results_html(history, file=sys.stdout):
 	history.sort_by_rscores()
 
@@ -360,7 +359,7 @@ def print_best_tournament_results_html(history, file=sys.stdout):
 		file.write('\t\t\t<td>%d</td>\n\t\t\t<td>%s</td>\n' % (place, name))
 
 		scores = [score for score in player.scores]
-		scores += [None] * (his.max_scores_count - len(scores))
+		scores += [None] * (history.max_scores_count - len(scores))
 
 		for score in scores:
 			if not score:
@@ -381,7 +380,7 @@ def print_cumulative_tournament_results_html(history, file=sys.stdout):
 	file.write('<table>\n\t<thead>\n\t\t<tr>\n')
 	file.write('\t\t\t<th>#</th>\n\t\t\t<th>x =</th>\n')
 
-	for i in range(3, his.max_scores_count + 1):
+	for i in range(3, history.max_scores_count + 1):
 		file.write('\t\t\t<th>%d</th>\n' % i)
 	file.write('\t\t</tr>\n\t</thead>\n\t<tbody>\n')
 
@@ -393,7 +392,7 @@ def print_cumulative_tournament_results_html(history, file=sys.stdout):
 		file.write('\t\t\t<td>%d</td>\n\t\t\t<td>%s</td>\n' % (place, name))
 
 		scores = [score for score in player.rtotals()]
-		scores += [None] * (his.max_scores_count - 2 - len(scores))
+		scores += [None] * (history.max_scores_count - 2 - len(scores))
 		last_score = None
 
 		for score in scores:
@@ -413,6 +412,11 @@ if __name__ == "__main__":
 	parser.add_argument("-c", action="store_true", help="cumulative results")
 	aa = parser.parse_args(sys.argv[1:])
 	#~ print(aa)
+
+	if not aa.i:
+		parser.error('need index file')
+	if not os.path.isfile(aa.i):
+		parser.error('not an index file')
 
 	pp = CsvTablePath.fromIndexFile(aa.i)
 	#~ print(pp)
