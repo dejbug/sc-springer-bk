@@ -114,7 +114,7 @@ def print_best_tournament_results(history, full = False):
 
 	for result in results:
 		print('%2d' % result['index'], end = ' ')
-		print('%5.1f' % result['score'], end = '  ')
+		print('%3d' % result['score'], end = '  ')
 		print(f'%-{result["max_name_length"]}s' % result['name'], end = ' ')
 		if full:
 			player = result['player']
@@ -130,14 +130,22 @@ def print_best_tournament_results(history, full = False):
 # for row in file.rows: print(row)
 # print(file.rscores(contiguous = False))
 #
-# print()
+# exit()
 #
 # file = File('tables/schnell-24-04.csv')
 # print('  ranks', file.ranks())
 # print('rscores', file.rscores())
 # for row in file.rows: print(row)
 # print(file.rscores(contiguous = False))
-
+#
+# exit()
+#
+# file = File('tables/blitz-24-07.csv')
+# print('  ranks', file.ranks())
+# print('rscores', file.rscores())
+# for row in file.rows: print(row)
+# print(file.rscores(contiguous = False))
+#
 # exit()
 
 pp = MtCsvPath.iter('tables')
