@@ -36,9 +36,9 @@ class File:
 					raise Exception("unknown CSV type")
 				elif t.startswith("t/"):
 					reader = csv.reader(self.tabs2comma(line.strip()) for line in file)
-					self._rows = [line for line in reader]
+					self._rows = [line for line in reader if line]
 				else:
-					reader = csv.reader(line.strip() for line in file)
+					reader = csv.reader(line.strip() for line in file if line)
 					self._rows = [line for line in reader]
 			for i in range(len(self._rows)):
 				self._rows[i] = [cell.strip() for cell in self._rows[i]]
@@ -103,6 +103,8 @@ class File:
 
 	def points_column_index(self):
 		# TODO: Add more types!
+		# TODO: Return absolute indices.
+		#	EXTRA: Reserve negative indices for errors (instead of raising the exception)?
 		t = self.type
 		if t.endswith("#NP"): return -1
 		if t.endswith("#NPR"): return 2
@@ -113,25 +115,29 @@ class File:
 		if self.type.endswith("#NGSRVPBS"): return [-2, -1]
 		return []
 
-	def ranks(self, contiguous = False, roworder = False):
+	def ranks(self, contiguous = False, roworder = False, tiebreaks = True):
 		#~ pscores = self.pscores()
 		#~ pscores = sorted(pscores, reverse = True)
 		#~ lut = range(len(pscores))
 		#~ lut = sorted(lut, reverse = True, key = lambda i: pscores[i])
 		#~ print(lut)
 
-		ranks = ((i, s) for i, s in enumerate(self.pscores(tiebreaks = True)))
+		ranks = ((i, s) for i, s in enumerate(self.pscores(tiebreaks = tiebreaks)))
 		ranks = sorted(ranks, reverse = True, key = lambda x: x[1])
-		#~ print("ranks (sorted)   ", ranks)
+		# print('%30s' % self.path, " | ranks (sorted) ", ranks)
+
+		assert len(ranks) >= 2
 
 		last = None
+		rank = 0
 		for index, rowindex_score in enumerate(ranks):
 			rowindex, score = rowindex_score
 			if score != last:
 				last = score
 				rank = rank + 1 if contiguous else index + 1
 			else:
-				rank = index
+				if contiguous:
+					rank = index
 			ranks[index] = (rowindex, rank)
 
 		if roworder:
@@ -156,10 +162,11 @@ class File:
 		return ss
 
 	def rscores(self, contiguous = False):
-		ranks = self.ranks(contiguous = contiguous, roworder = True)
+		ranks = self.ranks(contiguous = contiguous, roworder = False)
 		if len(ranks) == 0: return None
 		if len(ranks) == 1: return 10.0
 		topscore = 9.0 if ranks[0][1] == ranks[1][1] else 10.0
+		ranks = sorted(ranks, reverse = False, key = lambda x: x[0])
 		ranks = [topscore if r[1] == 1 else max(0.0, 10.0 - r[1]) for r in ranks]
 		return ranks
 

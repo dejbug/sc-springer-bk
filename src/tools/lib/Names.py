@@ -16,6 +16,9 @@ class Name:
 		self.fid = fid
 		self.sid = None
 
+	def __lt__(self, other):
+		return self.sid < other.sid
+
 	@classmethod
 	def load(cls, file):
 		#~ header = re.split(r',\s*|\s+', file.header)
@@ -104,19 +107,21 @@ class HashedName:
 # TODO: Move synonyms into an external textfile.
 DEFAULT_SYNONYMS = [
 	["Anton", "Daniel Anton"],
-	["Brunner", "Ben Brunner", "Benedikt Brunner"],
-	["Budimir", "Dejan Budimir"],
+	["Brunner", "Ben Brunner", "Benedikt Brunner", "Ben"],
+	["Budimir", "Dejan Budimir", "Dejan"],
 	["Hentzner", "Bernd Hentzner"],
-	["Heusel", "Bernd Heusel"],
+	["Heusel", "Bernd Heusel", "Bernd"],
 	["Hügelschäfer", "Patrick Hügelschäfer", "Patty Hügelschäfer"],
-	["Iwanicki", "Marcel Iwanicki"],
-	["Messer", "Reiner Messer"],
+	["Iwanicki", "Marcel Iwanicki", "Marcel"],
+	["Messer", "Reiner Messer", "Reiner"],
 	["Petersen", "Hein Petersen", "Heinrich Petersen"],
-	["Pfeiffer", "Willi Pfeiffer"],
-	["Sauer", "Bruno Sauer"],
+	["Pfeiffer", "Willi Pfeiffer", "Willi", "Willy"],
+	["Sauer", "Bruno Sauer", "Bruno"],
 	["Reinhold", "Manuel Reinhold"],
 	["Schmidt", "Rudolf Schmidt"],
 	["Schupp", "Reinhold Schupp"],
 	["Talin", "Talin Hoffmann"],
-	["Wenzel", "Donald Wenzel"],
+	["Wenzel", "Donald Wenzel", "Donald"],
+	["Bechtold S.", "Sebastian Bechtold", "Sebastian B."],
+	["Bechtold B.", "Horst Bechtold", "Horst"],
 ]
