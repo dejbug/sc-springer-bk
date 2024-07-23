@@ -15,7 +15,9 @@ MISC := $(MISC:%=dist/%)
 # VEREINSTURNIERE := $(shell python tools/vereinsturniere.py --tdir tables --list)
 # VEREINSTURNIERE := $(VEREINSTURNIERE:%=dist/vereinsturniere-%.html)
 # VEREINSTURNIERE := $(patsubst %,dist/vereinsturniere-%.html,$(VEREINSTURNIERE))
-VEREINSTURNIERE := $(shell python tools/patsubst.py \(.+\) dist/vereinsturniere-\\1.html '22 23 24')
+# VEREINSTURNIERE := $(shell python tools/patsubst.py \(.+\) dist/vereinsturniere-\\1.html '22 23 24')
+VEREINSTURNIERE := 22 23 24
+VEREINSTURNIERE := $(VEREINSTURNIERE:%=dist/vereinsturniere-%.html)
 
 HTML := $(wildcard *.html) default.css
 HTML := $(HTML:%=dist/%) $(VEREINSTURNIERE)

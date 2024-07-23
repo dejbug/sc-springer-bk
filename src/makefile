@@ -1,5 +1,7 @@
 $(info make v$(MAKE_VERSION))
 
+SHELL := bash
+
 .PHONY : all clean reset serve run ls inc incpat incmaj incmin
 
 VENDOR := 0
