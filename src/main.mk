@@ -11,8 +11,9 @@ MISC += $(wildcard vendor/rewe/img/*.png)
 endif
 MISC := $(MISC:%=dist/%)
 
-VEREINSTURNIERE := $(shell python tools/vereinsturniere.py --tdir tables --list)
-VEREINSTURNIERE := $(VEREINSTURNIERE:%=dist/vereinsturniere-%.html)
+# VEREINSTURNIERE := $(shell python tools/vereinsturniere.py --tdir tables --list)
+# VEREINSTURNIERE := $(VEREINSTURNIERE:%=dist/vereinsturniere-%.html)
+VEREINSTURNIERE := dist/vereinsturniere-24.html dist/vereinsturniere-22.html dist/vereinsturniere-23.html
 
 HTML := $(wildcard *.html) default.css
 HTML := $(HTML:%=dist/%) $(VEREINSTURNIERE)
