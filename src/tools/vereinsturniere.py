@@ -245,6 +245,9 @@ def find_me(pdir, year):
 def find_years(aa):
 	regex = re.compile(r'(blitz|schnell)-(\d+)-(\d+)(-games.*?)?(\.csv)')
 	nn = os.listdir(aa.tdir)
+	nn = list(nn)
+	for n in nn:
+		sys.stderr.write(n + '\n')
 	nn = (regex.match(n) for n in nn)
 	nn = (n for n in nn if n)
 	yy = set()

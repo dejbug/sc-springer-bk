@@ -19,6 +19,8 @@ MISC := $(MISC:%=dist/%)
 #	with the piping sends debug output through our $(shell python ...) call.
 # VEREINSTURNIERE := $(shell echo 22 23 24)
 VEREINSTURNIERE := $(shell python tools/vereinsturniere.py --list)
+$(info --- VEREINSTURNIERE ---)
+$(info $(VEREINSTURNIERE))
 VEREINSTURNIERE := $(VEREINSTURNIERE:%=dist/vereinsturniere-%.html)
 
 HTML := $(wildcard *.html) default.css
