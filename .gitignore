@@ -2,4 +2,5 @@
 /src/dist/
 /src/build/
 *.pyc
+*.swp
 scheine.json
