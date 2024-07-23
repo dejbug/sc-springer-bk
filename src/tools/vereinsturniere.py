@@ -266,7 +266,7 @@ if __name__ == "__main__":
 			if po: pp.append(po)
 			print('\n'.join(pp))
 		else:
-			print(" ".join(map(str, find_years(aa))))
+			print(' '.join(str(x) for x in sorted(find_years(aa))))
 		exit()
 
 	if aa.index:
