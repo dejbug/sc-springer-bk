@@ -1,3 +1,5 @@
+$(info make v$(MAKE_VERSION))
+
 .PHONY : all clean reset serve run ls inc incpat incmaj incmin
 
 VENDOR := 0
