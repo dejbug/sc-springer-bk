@@ -21,7 +21,11 @@ ifeq ($(REWE),0)
 HTML := $(filter-out %/scheinescanner.html,$(HTML))
 endif
 
-.PHONY : all
+$(info --- HTML ---)
+$(info $(HTML))
+$(info --- MISC ---)
+$(info $(MISC))
+
 all : $(HTML) $(MISC) dist/VERSION
 
 .PHONY : x-html x-misc
